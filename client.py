@@ -1,10 +1,7 @@
 import socket
+import sys
 
-IP = socket.gethostbyname(socket.gethostname())
-PORT = 5580
-ADDR = (IP, PORT)
-FORMAT = "utf-8"
-SIZE = 1024
+
 
 
 # PERSONAL_ID = '09665A'
@@ -14,6 +11,26 @@ SIZE = 1024
 
 
 def main():
+
+
+
+    
+    
+
+
+    config_file=sys.argv[1]
+    f = open(config_file,"r")
+    lines = f.readlines()
+    server_port=lines[0]
+    x = server_port.split("=")
+    server_port=x[1]
+    server_port=int(server_port)
+    PORT=server_port
+    IP = socket.gethostbyname(socket.gethostname())
+    ADDR = (IP, PORT)
+    FORMAT = "utf-8"
+    SIZE = 1024
+
     """ Staring a TCP socket. """
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -21,11 +38,11 @@ def main():
     client.connect(ADDR)
 
     """ Opening and reading the file data. """
-    file = open("data/yt.txt", "r")
+    file = open("data/examplemail.txt", "r")
     data = file.read()
 
     """ Sending the filename to the server. """
-    client.send("yt.txt".encode(FORMAT))
+    client.send("examplemail.txt".encode(FORMAT))
     msg = client.recv(SIZE).decode(FORMAT)
     print(f"[SERVER]: {msg}")
 
