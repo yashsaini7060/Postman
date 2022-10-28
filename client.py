@@ -2,21 +2,13 @@ import socket
 import sys
 
 
-
-
-# PERSONAL_ID = '09665A'
-# PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
+PERSONAL_ID = '09665A'
+PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
 
 
 
 
 def main():
-
-
-
-    
-    
-
 
     config_file=sys.argv[1]
     f = open(config_file,"r")
