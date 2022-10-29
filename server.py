@@ -1,7 +1,6 @@
 import socket
 import sys
 import os
-from turtle import clear
 
 # PERSONAL_ID = '09665A'
 # PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 

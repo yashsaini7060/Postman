@@ -1,23 +1,39 @@
 import socket
 import sys
-
+import os
 
 PERSONAL_ID = '09665A'
 PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
 
 
 
+def get_port_and_path():
+    try:
+        config_file=sys.argv[1]
+        f = open(config_file,"r")
+        lines = f.readlines()
+        server_port=lines[0]
+        x = server_port.split("=")
+        server_port=x[1]
+        server_port=int(server_port)
+        inbox_path=lines[2]
+        x = inbox_path.split("~")
+        inbox_path=x[1]
+        if inbox_path.endswith("\n"):
+            inbox_path=inbox_path[:-1]
+            inbox_path=inbox_path[1:]
+        if os.access(inbox_path, os.W_OK):
+            return server_port, inbox_path
+        else:
+            exit(2)
+    except:
+        exit(1)
+
+
+
 
 def main():
-
-    config_file=sys.argv[1]
-    f = open(config_file,"r")
-    lines = f.readlines()
-    server_port=lines[0]
-    x = server_port.split("=")
-    server_port=x[1]
-    server_port=int(server_port)
-    PORT=server_port
+    PORT, INBOX_PATH = get_port_and_path()
     IP = socket.gethostbyname(socket.gethostname())
     ADDR = (IP, PORT)
     FORMAT = "utf-8"
