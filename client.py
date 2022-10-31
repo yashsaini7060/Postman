@@ -22,7 +22,7 @@ def get_port_and_path():
         if inbox_path.endswith("\n"):
             inbox_path=inbox_path[:-1]
             inbox_path=inbox_path[1:]
-        if os.access(inbox_path, os.W_OK):
+        if os.access(inbox_path, os.R_OK):
             return server_port, inbox_path
         else:
             exit(2)
@@ -44,7 +44,8 @@ def main():
 
     """ Connecting to the server. """
     client.connect(ADDR)
-
+    print(client.recv(SIZE).decode(FORMAT))
+    
     """ Opening and reading the file data. """
     file = open("data/examplemail.txt", "r")
     data = file.read()

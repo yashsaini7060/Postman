@@ -45,13 +45,13 @@ def main():
     server.bind(ADDR)
 
     """ Server is listening, i.e., server is now waiting for the client to connected. """
-    server.listen()
-    # print("[LISTENING] Server is listening.")
-    print("S: 220 Service ready")
+    server.listen(1)
+
     while True:
         """ Server has accepted the connection from the client. """
         conn, addr = server.accept()
-        print(f"[NEW CONNECTION] {addr} connected.")
+        conn.send("S: 220 Service ready".encode(FORMAT))
+
 
         """ Receiving the filename from the client. """
         filename = conn.recv(SIZE).decode(FORMAT)
