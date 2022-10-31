@@ -44,7 +44,8 @@ def main():
 
     """ Connecting to the server. """
     client.connect(ADDR)
-    print(client.recv(SIZE).decode(FORMAT))
+    rv=client.recv(SIZE).decode(FORMAT)
+    print(rv)
     
     """ Opening and reading the file data. """
     file = open("data/examplemail.txt", "r")
