@@ -89,7 +89,6 @@ def get_configs():
             if os.access(inbox_path, os.W_OK):
                 pass
             else:
-                print("code 2")
                 exit(2)
 
         # SEND PATH
@@ -104,7 +103,6 @@ def get_configs():
         if os.access(send_path, os.R_OK):
             pass
         else:
-            print("code 2")
             exit(2)
         
         # SPY PATH
@@ -120,19 +118,16 @@ def get_configs():
         if os.access(spy_path, os.W_OK):
             pass
         else:
-            print("code 2")
             exit(2)
         
         return client_port, inbox_path
 
     except:
-        # print("code 1")
         exit(1)
 
 def get_email_body() -> str:
     """
     Gets the content of the email body.
-
     Returns:
         The content of the email body as a string.
     """
@@ -145,7 +140,6 @@ def get_email_body() -> str:
 def get_to_users() -> tuple[EmailUser, ...]:
     """
     Gets all recipients that the email will be sent to.
-
     Returns:
         A tuple containing all recipients the email will be addressed to.
     """
@@ -172,7 +166,6 @@ def get_to_users() -> tuple[EmailUser, ...]:
 def get_from_user() -> EmailUser:
     """
     Gets information about the user sending the email.
-
     Returns:
         An EmailUser representing the user sending the email.
     """
@@ -186,7 +179,6 @@ def get_from_user() -> EmailUser:
 def get_email_data() -> Email:
     """
     Gets all necessary information required to send an email via the USYD mail server via SMTP.
-
     Returns:
         An Email object containing all necessary information for a plain text email.
     """
@@ -207,13 +199,12 @@ def setup_client_connection() -> socket.socket:
     """
     Sets up a client socket connection to the USYD mail server for communication over a network. If 
     the client cannot connect, after 20 seconds, the program automatically exits with an error.
-
     Returns:
         A client socket connected to the USYD mail server.
     """
 
     PORT, INBOX_PATH = get_configs()
-    IP = socket.gethostbyname(socket.gethostname())
+    IP = "localhost"
     SMTP_SERVER = (IP, PORT)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -236,12 +227,10 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
     """
     Checks the status code obtained by the server in response to a message. If the server's status 
     code does not match the expected provided code, a ValueError is raised.
-
     Args:
         client_sock: the client socket connected to the USYD mail server.
         expected_status_code: the status code we expect to receive from the server after sending a 
             message.
-
     Raises:
         ValueError: if the status code returned by the server does not match expected_status_code.
     """
@@ -261,7 +250,6 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
 def send_data(client_socket: socket.socket, email: Email) -> None:
     """
     Sends the DATA message to the mail server, as well as the MIME data portion of the email.
-
     Args:
         client_socket: the client socket connected to the USYD mail server.
         email: the Email object containing all necessary information for a plain text email.
@@ -299,7 +287,6 @@ def send_data(client_socket: socket.socket, email: Email) -> None:
 def send_to_recipients(client_socket: socket.socket, email: Email) -> None:
     """
     Send a RCPT TO messager to the mail server for all recipients
-
     Args:
         client_socket: the client socket connected to the USYD mail server.
         email: the Email object containing all necessary information for a plain text email.
@@ -313,7 +300,6 @@ def send_to_recipients(client_socket: socket.socket, email: Email) -> None:
 def send_helo(client_sock: socket.socket) -> None:
     """
     Sends a HELO SMTP message to the mail server.
-
     Args:
         client_sock: the client socket connected to the USYD mail server.
     """
@@ -323,7 +309,6 @@ def send_helo(client_sock: socket.socket) -> None:
 def send_email_via_server(client_sock: socket.socket, email: Email) -> None:
     """
     Communicates with the USYD mail server in order to send an email using the SMTP protocol.
-
     Args:
         client_sock: the client socket connected to the USYD mail server.
         email: the Email object containing all necessary information for a plain text email.
@@ -331,7 +316,7 @@ def send_email_via_server(client_sock: socket.socket, email: Email) -> None:
     with client_sock:
         # Check initial status code after connection (220)
         check_status_code(client_sock, 220)
-
+        print
         # Send the HELO message, and check the status code
         # send_helo(client_sock)
         # check_status_code(client_sock, 250)
@@ -360,10 +345,12 @@ def send_email_via_server(client_sock: socket.socket, email: Email) -> None:
 
 def main():
     client_sock = setup_client_connection()
-    email = get_email_data()
-    send_email_via_server(client_sock, email)
+    check_status_code(client_sock, 220)
+    print("S: 220 Service ready")
+    # email = get_email_data()
+    # send_email_via_server(client_sock, email)
  
 
 
 if __name__ == "__main__":
-    main()
+    main() 

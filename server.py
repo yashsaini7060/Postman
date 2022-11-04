@@ -53,7 +53,6 @@ def get_port_and_path():
             if os.access(inbox_path, os.W_OK):
                 pass
             else:
-                print("code 2")
                 exit(2)
 
         # SEND PATH
@@ -68,7 +67,6 @@ def get_port_and_path():
         if os.access(send_path, os.R_OK):
             pass
         else:
-            print("code 2")
             exit(2)
         
         # SPY PATH
@@ -84,13 +82,11 @@ def get_port_and_path():
         if os.access(spy_path, os.W_OK):
             pass
         else:
-            print("code 2")
             exit(2)
         
         return client_port, inbox_path
 
     except:
-        # print("code 1")
         exit(1)
 
 # def get_port_and_path():
@@ -120,7 +116,7 @@ def get_port_and_path():
 
 def main():
     PORT, INBOX_PATH = get_port_and_path()
-    IP = socket.gethostbyname(socket.gethostname())
+    IP = "localhost"
     ADDR = (IP, PORT)
     SIZE = 256
     FORMAT = "utf-8"
@@ -144,12 +140,16 @@ def main():
         """ Receiving the filename from the client. """
         filename = conn.recv(SIZE).decode(FORMAT)
         print(filename)
+        conn.send("250 Service ready".encode(FORMAT))
         mail_from = conn.recv(SIZE).decode(FORMAT)
         print(mail_from)
+        conn.send("250 Service ready".encode(FORMAT))
         send_to_recipient = conn.recv(SIZE).decode(FORMAT)
         print(send_to_recipient)
+        conn.send("250 Service ready".encode(FORMAT))
         send_data = conn.recv(SIZE).decode(FORMAT)
         print(send_data)
+        conn.send("250 Service ready".encode(FORMAT))
 
 
         """ Closing the connection from the client. """
