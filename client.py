@@ -345,8 +345,9 @@ def send_email_via_server(client_sock: socket.socket, email: Email) -> None:
 
 def main():
     client_sock = setup_client_connection()
-    check_status_code(client_sock, 220)
-    print("S: 220 Service ready")
+    with client_sock:
+        check_status_code(client_sock, 220)
+        print("S: 220 Service ready")
     # email = get_email_data()
     # send_email_via_server(client_sock, email)
  
