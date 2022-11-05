@@ -5,6 +5,7 @@ import os
 # PERSONAL_ID = '09665A'
 # PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
 
+IP = "127.0.0.1"
 
 def get_port_and_path():
     try:
@@ -84,7 +85,7 @@ def get_port_and_path():
         else:
             exit(2)
         
-        return client_port, inbox_path
+        return server_port, inbox_path
 
     except:
         exit(1)
@@ -116,9 +117,9 @@ def get_port_and_path():
 
 def main():
     PORT, INBOX_PATH = get_port_and_path()
-    IP = "localhost"
+
     ADDR = (IP, PORT)
-    SIZE = 256
+    SIZE = 1024
     FORMAT = "utf-8"
 
     # print("[STARTING] Server is starting.")
@@ -129,7 +130,7 @@ def main():
     server.bind(ADDR)
 
     """ Server is listening, i.e., server is now waiting for the client to connected. """
-    server.listen(1)
+    server.listen()
 
     while True:
         """ Server has accepted the connection from the client. """
@@ -137,9 +138,10 @@ def main():
         conn.send("220 Service ready".encode(FORMAT))
 
 
-        """ Receiving the filename from the client. """
-        filename = conn.recv(SIZE).decode(FORMAT)
-        print(filename)
+        """ Receiving the hello  from the client. """
+        hello = conn.recv(SIZE).decode(FORMAT)
+        print(hello)
+        ehol
         conn.send("250 Service ready".encode(FORMAT))
         mail_from = conn.recv(SIZE).decode(FORMAT)
         print(mail_from)

@@ -7,7 +7,7 @@ from datetime import datetime
 
 PERSONAL_ID = '09665A'
 PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
-
+IP = "127.0.0.1"
 
 
 @dataclass(frozen=True)
@@ -120,7 +120,7 @@ def get_configs():
         else:
             exit(2)
         
-        return client_port, inbox_path
+        return server_port, inbox_path
 
     except:
         exit(1)
@@ -204,13 +204,13 @@ def setup_client_connection() -> socket.socket:
     """
 
     PORT, INBOX_PATH = get_configs()
-    IP = "localhost"
+
     SMTP_SERVER = (IP, PORT)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # allows us to relaunch the application quickly without having to worry about "address already 
     # in use errors"
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    # sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     # Sets timeout of socket: we will use this to check if we can connect to the server
     sock.settimeout(20)
 
@@ -218,9 +218,10 @@ def setup_client_connection() -> socket.socket:
         # Connct to server
         sock.connect(SMTP_SERVER)
     except TimeoutError:
-        sys.exit("Error: cannot connect to USYD SMTP server.\n"
-                 "Are you on the USYD Network, or connected to the USYD VPN?")
-
+        print("exit_code 3")
+        exit(3)
+        
+    print(IP)
     return sock
 
 def check_status_code(client_sock: socket.socket, expected_status_code: int) -> None:
@@ -235,7 +236,7 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
         ValueError: if the status code returned by the server does not match expected_status_code.
     """
     # Get response from server
-    server_data = client_sock.recv(256)
+    server_data = client_sock.recv(1024)
     server_data_str = server_data.decode()
     # Split response from server into list (on whitespace)
     server_data_ls = server_data_str.split()
@@ -306,7 +307,9 @@ def send_helo(client_sock: socket.socket) -> None:
     Args:
         client_sock: the client socket connected to the USYD mail server.
     """
-    client_sock.send(b"HELO python.client\r\n")
+    ehol="EHOL " + IP +"\r\n"
+    client_sock.send(b"EHLO 127.0.0.1\r\n")
+    print("C: EHLO 127.0.0.1")
 
 
 def send_email_via_server(client_sock: socket.socket, email: Email) -> None:
@@ -319,10 +322,10 @@ def send_email_via_server(client_sock: socket.socket, email: Email) -> None:
     with client_sock:
         # Check initial status code after connection (220)
         check_status_code(client_sock, 220)
-        print
+
         # Send the HELO message, and check the status code
-        # send_helo(client_sock)
-        # check_status_code(client_sock, 250)
+        send_helo(client_sock)
+        check_status_code(client_sock, 250)
 
         # Send the MAIL FROM message to the server, and check the status code
         from_user = email.from_user
@@ -347,13 +350,16 @@ def send_email_via_server(client_sock: socket.socket, email: Email) -> None:
 
 
 def main():
-    # print("S: 220 Service ready", flush=True)
-    client_sock = setup_client_connection()
-    with client_sock:
-        check_status_code(client_sock, 220)
-        
-    # email = get_email_data()
-    # send_email_via_server(client_sock, email)
+    try:
+        client_sock = setup_client_connection()
+        with client_sock:
+            check_status_code(client_sock, 220)
+            send_helo(client_sock)
+        email = get_email_data()
+        send_email_via_server(client_sock, email)
+    except:
+        print("C: Cannot establish connection")
+    
  
 
 
