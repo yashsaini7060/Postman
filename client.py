@@ -355,8 +355,8 @@ def main():
         with client_sock:
             check_status_code(client_sock, 220)
             send_helo(client_sock)
-        email = get_email_data()
-        send_email_via_server(client_sock, email)
+        # email = get_email_data()
+        # send_email_via_server(client_sock, email)
     except:
         print("C: Cannot establish connection")
     
