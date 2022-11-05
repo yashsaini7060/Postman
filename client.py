@@ -245,7 +245,10 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
 
     if actual_status_code != expected_status_code:
         raise ValueError(f"expected code {expected_status_code}, but was {actual_status_code}")
-
+    else:
+        out_str="S: " + server_data_str
+        print(out_str, flush=True)
+        # print(f"S: {server_data_str}")
 
 def send_data(client_socket: socket.socket, email: Email) -> None:
     """
@@ -348,7 +351,7 @@ def main():
     client_sock = setup_client_connection()
     with client_sock:
         check_status_code(client_sock, 220)
-        print("S: 220 Service ready", flush=True)
+        
     # email = get_email_data()
     # send_email_via_server(client_sock, email)
  
