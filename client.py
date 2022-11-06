@@ -8,7 +8,7 @@ from datetime import datetime
 PERSONAL_ID = '09665A'
 PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
 IP = 'localhost'
-FORMAT = "utf-8"
+FORMAT = "ascii"
 SIZE = 1024
 PORT=0
 INBOX_PATH=''
@@ -149,8 +149,9 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
         ValueError: if the status code returned by the server does not match expected_status_code.
     """
     # Get response from server
+    global FORMAT
     server_data = client_sock.recv(SIZE)
-    server_data_str = server_data.decode()
+    server_data_str = server_data.decode(FORMAT)
     # Split response from server into list (on whitespace)
     server_data_ls = server_data_str.split()
 
@@ -220,7 +221,8 @@ def send_helo(client_sock: socket.socket) -> None:
     Args:
         client_sock: the client socket connected to the USYD mail server.
     """
-    client_sock.send(b"HELO 127.0.0.1\r\n")
+    string="HELO 127.0.0.1\r\n"
+    client_sock.send(string.encode(FORMAT))
     print("C: HELO 127.0.0.1", flush=True)
 
 

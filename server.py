@@ -5,7 +5,7 @@ import os
 # PERSONAL_ID = '09665A'
 # PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
 IP = 'localhost'
-FORMAT = "utf-8"
+FORMAT = "ascii"
 SIZE = 1024
 PORT=0
 INBOX_PATH=''
@@ -101,10 +101,11 @@ def get_port_and_path():
 
 
 def send_data(conn , string):
-    conn.send(string.encode())
+    global FORMAT
+    conn.send(string.encode(FORMAT))
     new_str="S: " + string
     print(new_str, flush=True)
-    client_response= conn.recv(SIZE).decode()
+    client_response= conn.recv(SIZE).decode(FORMAT)
     return client_response
 
 def main():
