@@ -4,7 +4,7 @@ import os
 
 # PERSONAL_ID = '09665A'
 # PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
-IP = 'localhost'
+IP = '127.0.0.1'
 FORMAT = "ascii"
 SIZE = 1024
 PORT=0
