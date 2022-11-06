@@ -11,10 +11,10 @@ IP = 'localhost'
 FORMAT = "ascii"
 SIZE = 1024
 PORT=0
-INBOX_PATH=''
+SEND_PATH=''
 def get_port_and_path():
     global PORT
-    global INBOX_PATH
+    global SEND_PATH
     try:
         config_file=sys.argv[1]
 
@@ -22,7 +22,7 @@ def get_port_and_path():
         f = open(config_file,"r")
         lines = f.readlines()
         print(lines)
-        if(len(lines)<5):
+        if(len(lines)<2):
             exit(2)
 
 
@@ -39,67 +39,26 @@ def get_port_and_path():
             if server_port < 1024:
                 exit(2)
 
-        # CLIENT PORT
-
-        client_port=lines[1]
-        if client_port.lower().startswith("client_port"):
-            x = client_port.split("=")
-            client_port=x[1]
-            if client_port.endswith("\n"):
-                client_port=client_port[:-1]
-            client_port=int(client_port)
-
-            if client_port < 1024 and server_port==client_port:
-                exit(2)
 
         
-        # INBOX PATH
-        inbox_path=lines[2]
-        
-        if inbox_path.lower().startswith("inbox_path"):
-            x = inbox_path.split("=")
-            inbox_path=x[1]
-            if inbox_path.endswith("\n"):
-                inbox_path=inbox_path[:-1]
-            if inbox_path.startswith("~/"):
-                inbox_path=inbox_path[2:]
-            if os.access(inbox_path, os.W_OK):
-                pass
-            else:
-                exit(2)
-
         # SEND PATH
-        send_path=lines[3]
+        send_path=lines[1]
         if send_path.lower().startswith("send_path"):
             x = send_path.split("=")
             send_path=x[1]
         if send_path.endswith("\n"):
             send_path=send_path[:-1]
-        if send_path.startswith("~/"):
-            send_path=send_path[2:]
-        if os.access(send_path, os.R_OK):
-            pass
-        else:
-            exit(2)
-        
-        # SPY PATH
-
-        spy_path=lines[4]
-        if spy_path.lower().startswith("spy_path"):
-            x = spy_path.split("=")
-            spy_path=x[1]
-        if spy_path.endswith("\n"):
-            spy_path=spy_path[:-1]
-        if spy_path.startswith("~/"):
-            spy_path=spy_path[2:]
-        if os.access(spy_path, os.W_OK):
-            pass
-        else:
-            exit(2)
+        # if send_path.startswith("~/"):
+        #     send_path=send_path[2:]
+        # if os.access(send_path, os.R_OK):
+        #     pass
+        # else:
+        #     print("h2")
+        #     exit(2)
         
         # return server_port, inbox_path
         PORT=server_port
-        INBOX_PATH=inbox_path
+        SEND_PATH=send_path
     except:
         exit(1)
 
@@ -119,6 +78,7 @@ def setup_client_connection() -> socket.socket:
     # PORT, INBOX_PATH = get_configs()
     
     get_port_and_path()
+    print(PORT)
     print("test")
     # SMTP_SERVER = (IP, PORT)
     # PORT=int(PORT)
