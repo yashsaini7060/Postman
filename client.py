@@ -21,7 +21,7 @@ def get_port_and_path():
         # FILE READINGG
         f = open(config_file,"r")
         lines = f.readlines()
-        if(len(lines)>=5):
+        if(len(lines)<5):
             exit(2)
 
 
@@ -116,8 +116,9 @@ def setup_client_connection() -> socket.socket:
     global PORT
     global IP
     # PORT, INBOX_PATH = get_configs()
-    print("test")
+    
     get_port_and_path()
+    print("test")
     # SMTP_SERVER = (IP, PORT)
     # PORT=int(PORT)
     print(PORT, flush=True)
