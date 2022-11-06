@@ -4,7 +4,7 @@ import os
 
 # PERSONAL_ID = '09665A'
 # PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
-IP = '127.0.0.1'
+IP = 'localhost'
 FORMAT = "utf-8"
 SIZE = 1024
 PORT=0
@@ -103,7 +103,7 @@ def get_port_and_path():
 def send_data(conn , string):
     conn.send(string.encode())
     new_str="S: " + string
-    print(new_str)
+    print(new_str, flush=True)
     client_response= conn.recv(SIZE).decode()
     return client_response
 
@@ -111,19 +111,12 @@ def main():
     global PORT
     global IP
     get_port_and_path()
-    # print(PORT)
-    # print(IP)
-    # PORT, INBOX_PATH = 
-    # print(type(PORT))
-    # if PORT.endswith("\n"):
-    #     PORT=PORT[:-1]
-    # PORT=int(PORT)
-    # print("[STARTING] Server is starting.")
+
     """ Staring a TCP socket. """
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     """ Bind the IP and PORT to the server. """
-    # print(PORT)
+
     server.bind((IP, PORT))
 
     """ Server is listening, i.e., server is now waiting for the client to connected. """
@@ -137,7 +130,7 @@ def main():
 
         ehol_response = send_data(conn, "220 Service ready")
         ehol_response = "C: " + ehol_response
-        print(ehol_response)
+        print(ehol_response, flush=True)
 
         # filename = conn.recv(SIZE).decode(FORMAT)
         # print(filename)
@@ -155,7 +148,7 @@ def main():
 
         """ Closing the connection from the client. """
         conn.close()
-        print(f"[DISCONNECTED] {addr} disconnected.")
+        # print(f"[DISCONNECTED] {addr} disconnected.")
 
 if __name__ == "__main__":
     main() 

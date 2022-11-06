@@ -7,7 +7,7 @@ from datetime import datetime
 
 PERSONAL_ID = '09665A'
 PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
-IP = '127.0.0.1'
+IP = 'localhost'
 FORMAT = "utf-8"
 SIZE = 1024
 PORT=0
@@ -221,7 +221,7 @@ def send_helo(client_sock: socket.socket) -> None:
         client_sock: the client socket connected to the USYD mail server.
     """
     client_sock.send(b"HELO 127.0.0.1\r\n")
-    print("C: HELO 127.0.0.1")
+    print("C: HELO 127.0.0.1", flush=True)
 
 
 # def send_email_via_server(client_sock: socket.socket, email: Email) -> None:
