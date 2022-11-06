@@ -267,6 +267,7 @@ def main():
     # print("S: 220 Service ready", flush=True)
     client_sock = setup_client_connection()
     with client_sock:
+        print('S: 220 Service ready')
         check_status_code(client_sock, 220)
         send_helo(client_sock)
     # email = get_email_data()
