@@ -7,7 +7,7 @@ from datetime import datetime
 
 PERSONAL_ID = '09665A'
 PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
-IP = '127.0.0.1'
+IP = 'localhost'
 FORMAT = "ascii"
 SIZE = 1024
 PORT=0
@@ -116,6 +116,7 @@ def setup_client_connection() -> socket.socket:
     global PORT
     global IP
     # PORT, INBOX_PATH = get_configs()
+    print("test")
     get_port_and_path()
     # SMTP_SERVER = (IP, PORT)
     # PORT=int(PORT)
