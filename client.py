@@ -21,7 +21,6 @@ def get_port_and_path():
         # FILE READINGG
         f = open(config_file,"r")
         lines = f.readlines()
-        print(lines)
         if(len(lines)<2):
             exit(2)
 
@@ -48,13 +47,10 @@ def get_port_and_path():
             send_path=x[1]
         if send_path.endswith("\n"):
             send_path=send_path[:-1]
-        # if send_path.startswith("~/"):
-        #     send_path=send_path[2:]
-        # if os.access(send_path, os.R_OK):
-        #     pass
-        # else:
-        #     print("h2")
-        #     exit(2)
+        if os.access(send_path, os.R_OK):
+            pass
+        else:
+            exit(2)
         
         # return server_port, inbox_path
         PORT=server_port
@@ -78,12 +74,6 @@ def setup_client_connection() -> socket.socket:
     # PORT, INBOX_PATH = get_configs()
     
     get_port_and_path()
-    print(PORT)
-    print("test")
-    # SMTP_SERVER = (IP, PORT)
-    # PORT=int(PORT)
-    print(PORT, flush=True)
-    print(IP, flush=True)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # allows us to relaunch the application quickly without having to worry about "address already 
     # in use errors"
@@ -126,7 +116,6 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
     else:
         out_str="S: " + server_data_str
         print(out_str, flush=True)
-        # print(f"S: {server_data_str}")
 
 # def send_data(client_socket: socket.socket, email: Email) -> None:
 #     """
@@ -227,10 +216,8 @@ def send_helo(client_sock: socket.socket) -> None:
 
 
 def main():
-    # print("S: 220 Service ready", flush=True)
     client_sock = setup_client_connection()
     with client_sock:
-        print('S: 220 Service ready', flush=True)
         check_status_code(client_sock, 220)
         send_helo(client_sock)
     # email = get_email_data()

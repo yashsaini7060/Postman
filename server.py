@@ -72,8 +72,6 @@ def get_port_and_path():
             send_path=x[1]
         if send_path.endswith("\n"):
             send_path=send_path[:-1]
-        if send_path.startswith("~/"):
-            send_path=send_path[2:]
         if os.access(send_path, os.R_OK):
             pass
         else:
@@ -87,8 +85,6 @@ def get_port_and_path():
             spy_path=x[1]
         if spy_path.endswith("\n"):
             spy_path=spy_path[:-1]
-        if spy_path.startswith("~/"):
-            spy_path=spy_path[2:]
         if os.access(spy_path, os.W_OK):
             pass
         else:

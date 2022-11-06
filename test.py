@@ -1,5 +1,9 @@
 import os
-a='Yash'
 
-if a.lower().startswith("yash"):
-  print(a)
+
+a='send'
+
+if os.access(a, os.R_OK):
+  print('yess')
+else:
+  print("noooo")

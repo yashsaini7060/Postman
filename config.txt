@@ -1,5 +1,5 @@
 server_port=1028
 client_port=1026
-inbox_path=~/inbox
-send_path=~/send
-spy_path=~/spy
+inbox_path=inbox
+send_path=send
+spy_path=spy

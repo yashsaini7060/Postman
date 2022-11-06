@@ -1,3 +1,2 @@
 server_port=1028
-
-send_path=~/send
+send_path=send
