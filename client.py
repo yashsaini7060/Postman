@@ -119,8 +119,8 @@ def setup_client_connection() -> socket.socket:
     get_port_and_path()
     # SMTP_SERVER = (IP, PORT)
     # PORT=int(PORT)
-    # print(PORT)
-    # print(IP)
+    print(PORT, flush=True)
+    print(IP, flush=True)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # allows us to relaunch the application quickly without having to worry about "address already 
     # in use errors"
@@ -267,7 +267,7 @@ def main():
     # print("S: 220 Service ready", flush=True)
     client_sock = setup_client_connection()
     with client_sock:
-        print('S: 220 Service ready')
+        print('S: 220 Service ready', flush=True)
         check_status_code(client_sock, 220)
         send_helo(client_sock)
     # email = get_email_data()
