@@ -21,6 +21,7 @@ def get_port_and_path():
         # FILE READINGG
         f = open(config_file,"r")
         lines = f.readlines()
+        print(lines)
         if(len(lines)<5):
             exit(2)
 
