@@ -54,11 +54,12 @@ def get_port_and_path():
             if x.lower().startswith("send_path"): 
                 x = x.split("=")
                 x=x[1]
+                print('x1')
                 print(x)
                 if x.endswith('\n'):
                     x=x[:-1]
                 send_path=x
-
+                print(send_path)
         if send_path!='':
             if os.access(send_path, os.R_OK):
                 pass
