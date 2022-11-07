@@ -15,7 +15,12 @@ SEND_PATH=''
 def get_port_and_path():
     global PORT
     global SEND_PATH
+    config_file=''
     try:
+        config_file=sys.argv[1]
+    except:
+        exit(1)
+    if config_file!='':
         config_file=sys.argv[1]
 
         # FILE READINGG
@@ -39,7 +44,6 @@ def get_port_and_path():
             if server_port < 1024:
                 exit(2)
         else:
-            print('code 2')
             exit(2)
 
         # SEND PATH
@@ -65,8 +69,7 @@ def get_port_and_path():
 
         PORT=server_port
         SEND_PATH=send_path
-    except:
-        exit(1)
+
 
 
 
