@@ -56,6 +56,8 @@ def get_port_and_path():
                 x=x[1]
                 print('x1')
                 print(x)
+                val=x.endswith('\n')
+                print(val)
                 if x.endswith('\n'):
                     x=x[:-1]
                 send_path=x
