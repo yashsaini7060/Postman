@@ -142,7 +142,14 @@ def main():
         log_client(ehol_response)
         if ehol_response=="EHLO 127.0.0.1\r\n":
             send_data(conn, "250 127.0.0.1\r\n")
-            send_data(conn, "250 AUTH CRAM-MD5\r\n")
+        mail=get_response(conn)
+        log_client(mail)
+        mail=mail.split(" ")
+        mail=mail[0]
+        if mail.upper()=="MAIL":
+            send_data(conn, "250 Request mail action okay completed\r\n")
+
+
 
 
 

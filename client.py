@@ -82,7 +82,7 @@ def setup_client_connection() -> socket.socket:
     global PORT
     global IP
     
-    get_port_and_path()
+    
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # allows us to relaunch the application quickly without having to worry about "address already 
     # in use errors"
@@ -116,7 +116,9 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
     global FORMAT
     server_data = client_sock.recv(SIZE)
     server_data_str = server_data.decode(FORMAT)
-
+    if server_data_str=='':
+        print("server disconnected")
+        exit(3)
     #printing string
     out_str="S: " + server_data_str[:-1]
     print(out_str, flush=True)
@@ -144,47 +146,43 @@ def send_helo(client_sock: socket.socket) -> None:
     print(string, flush=True)
 
 
-def send_mail(client_sock, path):
+def send_mail(client_sock,file_path):
+    global FORMAT
+    print(file_path)
+    f = open(file_path, "r")
+    lines = f.readlines()
+    mail="MAIL " + lines[0]
+    client_sock.send(mail.encode(FORMAT))
+    check_status_code(client_sock, 250)
 
-    print(path)
-    try:
-        f = open(path, "r")
-        lines = f.readlines()
-        print(lines)
-    except:
-        print('unable to open file')
     
-    # global SEND_PATH
-
-    # dir_list = os.listdir(SEND_PATH)
-    # dir_list.sort()
-    # print(dir_list)
 
 
 
 
-def main():
-    global SEND_PATH
+def initialization(file_path):
+    """Intialization of socket connection reciving server identiy an sending ehol message then sending mail data"""
     client_sock = setup_client_connection()
-    print(SEND_PATH)
-    dir_list = os.listdir(SEND_PATH)
-    dir_list.sort()
-    print(dir_list)
-    i=0
-    while i< len(dir_list):
-        path=SEND_PATH+'/'+dir_list[i]
-
-        f = open(path, "r")
-        lines = f.readlines()
-        print(lines)
-        print('################################')
-        i=i+1
     with client_sock:
         #Session Initiation
         check_status_code(client_sock, 220)
         send_helo(client_sock)
         check_status_code(client_sock, 250)
-        check_status_code(client_sock, 250)
+        send_mail(client_sock,file_path)
+
+
+def main():
+    global SEND_PATH
+    get_port_and_path()
+    dir_list = os.listdir(SEND_PATH)
+    dir_list.sort()
+    i=0
+    while i< len(dir_list):
+        path=SEND_PATH+'/'+dir_list[i]
+        initialization(path)
+        
+        i=i+1
+    
         
         
         
