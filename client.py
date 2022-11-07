@@ -22,8 +22,6 @@ def get_port_and_path():
         f = open(config_file,"r")
         lines = f.readlines()
 
-
-
         # SERVER PORT
         server_port=''
 
@@ -34,8 +32,8 @@ def get_port_and_path():
         if server_port!='':
             server_port = server_port.split('=')
             server_port=server_port[1]
-            server_port=int(server_port[:-2])
-
+            if server_port.endswith('\n'):
+                server_port=int(server_port[:-1])
             if server_port < 1024:
                 exit(2)
         else:
@@ -49,9 +47,9 @@ def get_port_and_path():
             if x.lower().startswith("send_path"): 
                 x = x.split("=")
                 x=x[1]
-                # if x.endswith("\n"):
-                #     x=x[:-1]
-                send_path=x[:-2]
+                if x.endswith('\n'):
+                    x=x[:-1]
+                send_path=x
 
         if send_path!='':
             if os.access(send_path, os.R_OK):
