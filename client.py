@@ -3,7 +3,7 @@ import sys
 import os
 from dataclasses import dataclass
 from datetime import datetime
-
+import time
 
 PERSONAL_ID = '09665A'
 PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
@@ -146,16 +146,19 @@ def send_helo(client_sock: socket.socket) -> None:
 
 
 
+
+
 def main():
 
 
     client_sock = setup_client_connection()
     with client_sock:
+        #Session Initiation
         check_status_code(client_sock, 220)
         send_helo(client_sock)
         check_status_code(client_sock, 250)
         check_status_code(client_sock, 250)
-        
+
  
 
 
