@@ -174,7 +174,7 @@ def main():
     while i< len(dir_list):
         path=SEND_PATH+'\\'+dir_list[i]
 
-        f = open(SEND_PATH, "r")
+        f = open(path, "r")
         lines = f.readlines()
         print(lines)
         print('################################')
