@@ -1,3 +1,1 @@
-send_path=send
-server_port=1028
-
+server_port=4025\n
