@@ -63,13 +63,9 @@ def get_port_and_path():
         else:
             exit(2)
         
-        # dir_list = os.listdir(send_path)
-        # dir_list.sort()
-        # print(dir_list)
-
         PORT=server_port
         SEND_PATH=send_path
-        print(SEND_PATH)
+
 
 
 
@@ -168,9 +164,13 @@ def send_mail(client_sock, path):
 
 
 def main():
-
+    global SEND_PATH
     client_sock = setup_client_connection()
-    
+    print(SEND_PATH)
+    f = open(SEND_PATH, "r")
+    lines = f.readlines()
+    print(lines)
+
     with client_sock:
         #Session Initiation
         check_status_code(client_sock, 220)
@@ -179,10 +179,7 @@ def main():
         check_status_code(client_sock, 250)
         
         
-        print(SEND_PATH)
-        f = open(SEND_PATH, "r")
-        lines = f.readlines()
-        print(lines)
+        
         # dir_list = os.listdir(SEND_PATH)
         # dir_list.sort()
         # print(dir_list)
