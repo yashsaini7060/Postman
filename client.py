@@ -172,12 +172,13 @@ def main():
     print(dir_list)
     i=0
     while i< len(dir_list):
-        path=SEND_PATH+'\\'+dir_list[i]
+        path=SEND_PATH+'/'+dir_list[i]
 
         f = open(path, "r")
         lines = f.readlines()
         print(lines)
         print('################################')
+        i=i+1
     with client_sock:
         #Session Initiation
         check_status_code(client_sock, 220)

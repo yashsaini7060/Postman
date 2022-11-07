@@ -1,2 +1,2 @@
 server_port=4025
-send_path=./C/valid_01.send
+send_path=send
