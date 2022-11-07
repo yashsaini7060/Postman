@@ -54,6 +54,7 @@ def get_port_and_path():
             if x.lower().startswith("send_path"): 
                 x = x.split("=")
                 x=x[1]
+                print(x)
                 if x.endswith('\n'):
                     x=x[:-1]
                 send_path=x
@@ -67,7 +68,7 @@ def get_port_and_path():
         # dir_list = os.listdir(send_path)
         # dir_list.sort()
         # print(dir_list)
-
+        print(SEND_PATH)
         PORT=server_port
         SEND_PATH=send_path
 
