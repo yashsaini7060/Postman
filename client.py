@@ -151,8 +151,14 @@ def send_mail(client_sock,file_path):
     print(file_path)
     f = open(file_path, "r")
     lines = f.readlines()
-    mail="MAIL " + lines[0]
+    mail=lines[0].split(" ")
+    mail=mail[1]
+
+    mail="MAIL FROM:" + mail
     client_sock.send(mail.encode(FORMAT))
+    mail="C: "+ mail
+    print(mail)
+    
     check_status_code(client_sock, 250)
 
     
