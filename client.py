@@ -26,6 +26,7 @@ def get_port_and_path():
         # FILE READINGG
         f = open(config_file,"r")
         lines = f.readlines()
+        print(lines)
         if len(lines)<2:
             exit(2)
 
@@ -178,10 +179,10 @@ def main():
         check_status_code(client_sock, 250)
         
         
-
-        dir_list = os.listdir(SEND_PATH)
-        dir_list.sort()
-        print(dir_list)
+        print(SEND_PATH)
+        # dir_list = os.listdir(SEND_PATH)
+        # dir_list.sort()
+        # print(dir_list)
         # i=0
         # while i<len(dir_list):
         #     file_name=dir_list[i]
