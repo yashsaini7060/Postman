@@ -26,7 +26,7 @@ def get_port_and_path():
         # FILE READINGG
         f = open(config_file,"r")
         lines = f.readlines()
-        print(lines)
+        # print(lines)
         if len(lines)<2:
             exit(2)
 
@@ -180,6 +180,9 @@ def main():
         
         
         print(SEND_PATH)
+        f = open(SEND_PATH, "r")
+        lines = f.readlines()
+        print(lines)
         # dir_list = os.listdir(SEND_PATH)
         # dir_list.sort()
         # print(dir_list)
