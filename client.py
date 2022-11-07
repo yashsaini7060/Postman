@@ -98,7 +98,9 @@ def setup_client_connection() -> socket.socket:
         
         sock.connect((IP,PORT))
     except:
-        sys.exit("C: Cannot establish connection")
+        print("C: Cannot establish connection")
+        sys.exit(3)
+        
 
     return sock
 
