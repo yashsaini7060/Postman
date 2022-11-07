@@ -181,13 +181,14 @@ def main():
 
         dir_list = os.listdir(SEND_PATH)
         dir_list.sort()
-        i=0
-        while i<len(dir_list):
-            file_name=dir_list[i]
-            path=SEND_PATH+'\\'+file_name
-            print(file_name)
-            send_mail(client_sock, path)
-            i=i+1
+        print(dir_list)
+        # i=0
+        # while i<len(dir_list):
+        #     file_name=dir_list[i]
+        #     path=SEND_PATH+'\\'+file_name
+        #     print(file_name)
+        #     send_mail(client_sock, path)
+        #     i=i+1
         
  
 
