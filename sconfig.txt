@@ -1,2 +1,1 @@
-server_port=4025
 send_path=send

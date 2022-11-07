@@ -21,6 +21,8 @@ def get_port_and_path():
         # FILE READINGG
         f = open(config_file,"r")
         lines = f.readlines()
+        if len(lines)<2:
+            exit(2)
 
         # SERVER PORT
         server_port=''
@@ -37,9 +39,9 @@ def get_port_and_path():
             if server_port < 1024:
                 exit(2)
         else:
+            print('code 2')
             exit(2)
 
-        print(server_port)
         # SEND PATH
         send_path=''
 
