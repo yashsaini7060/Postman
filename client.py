@@ -167,10 +167,17 @@ def main():
     global SEND_PATH
     client_sock = setup_client_connection()
     print(SEND_PATH)
-    f = open(SEND_PATH, "r")
-    lines = f.readlines()
-    print(lines)
+    dir_list = os.listdir(SEND_PATH)
+    dir_list.sort()
+    print(dir_list)
+    i=0
+    while i< len(dir_list):
+        path=SEND_PATH+'\\'+dir_list[i]
 
+        f = open(SEND_PATH, "r")
+        lines = f.readlines()
+        print(lines)
+        print('################################')
     with client_sock:
         #Session Initiation
         check_status_code(client_sock, 220)
