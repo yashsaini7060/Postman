@@ -147,20 +147,48 @@ def send_helo(client_sock: socket.socket) -> None:
     print(string, flush=True)
 
 
+def send_mail(client_sock, path):
+
+    print(path)
+    try:
+        f = open(path, "r")
+        lines = f.readlines()
+        print(lines)
+    except:
+        print('unable to open file')
+    
+    # global SEND_PATH
+
+    # dir_list = os.listdir(SEND_PATH)
+    # dir_list.sort()
+    # print(dir_list)
+
 
 
 
 def main():
 
-
     client_sock = setup_client_connection()
+    
     with client_sock:
         #Session Initiation
         check_status_code(client_sock, 220)
         send_helo(client_sock)
         check_status_code(client_sock, 250)
         check_status_code(client_sock, 250)
+        
+        
 
+        dir_list = os.listdir(SEND_PATH)
+        dir_list.sort()
+        i=0
+        while i<len(dir_list):
+            file_name=dir_list[i]
+            path=SEND_PATH+'\\'+file_name
+            print(file_name)
+            send_mail(client_sock, path)
+            i=i+1
+        
  
 
 

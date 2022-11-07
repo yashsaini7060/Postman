@@ -143,7 +143,7 @@ def main():
         if ehol_response=="EHLO 127.0.0.1\r\n":
             send_data(conn, "250 127.0.0.1\r\n")
             send_data(conn, "250 AUTH CRAM-MD5\r\n")
-        print('check', flush=True)
+
 
 
         """ Closing the connection from the client. """
