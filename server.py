@@ -4,7 +4,7 @@ import os
 
 # PERSONAL_ID = '09665A'
 # PERSONAL_SECRET = '4c1ad1b77651992faa6e31e7f3cbdb8b' 
-IP = '127.0.0.1'
+IP = 'localhost'
 FORMAT = "ascii"
 SIZE = 1024
 PORT=0
@@ -18,7 +18,6 @@ def get_port_and_path():
         # FILE READINGG
         f = open(config_file,"r")
         lines = f.readlines()
-        print(lines)
         if(len(lines)<5):
             exit(2)
 
@@ -100,10 +99,23 @@ def get_port_and_path():
 def send_data(conn , string):
     global FORMAT
     conn.send(string.encode(FORMAT))
+    if string.endswith('\n'):
+            string=string[:-1]
     new_str="S: " + string
     print(new_str, flush=True)
+    
+
+def get_response(conn):
     client_response= conn.recv(SIZE).decode(FORMAT)
     return client_response
+
+def log_client(response):
+    if response.endswith('\n'):
+            response=response[:-1]
+    response = "C: " + response
+    print(response, flush=True)
+    
+
 
 def main():
     global PORT
@@ -125,23 +137,13 @@ def main():
         conn, addr = server.accept()
 
         # Service redy messagess
+        send_data(conn, "220 Service ready\r\n")
+        ehol_response = get_response(conn)
+        log_client(ehol_response)
+        if ehol_response=="EHLO 127.0.0.1\r\n":
+            send_data(conn, "250 127.0.0.1\r\n")
+            send_data(conn, "250 AUTH CRAM-MD5\r\n")
 
-        ehol_response = send_data(conn, "220 Service ready")
-        ehol_response = "C: " + ehol_response
-        print(ehol_response, flush=True)
-
-        # filename = conn.recv(SIZE).decode(FORMAT)
-        # print(filename)
-        # conn.send("250 Service ready".encode(FORMAT))
-        # mail_from = conn.recv(SIZE).decode(FORMAT)
-        # print(mail_from)
-        # conn.send("250 Service ready".encode(FORMAT))
-        # send_to_recipient = conn.recv(SIZE).decode(FORMAT)
-        # print(send_to_recipient)
-        # conn.send("250 Service ready".encode(FORMAT))
-        # send_data = conn.recv(SIZE).decode(FORMAT)
-        # print(send_data)
-        # conn.send("250 Service ready".encode(FORMAT))
 
 
         """ Closing the connection from the client. """

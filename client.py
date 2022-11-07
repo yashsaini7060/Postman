@@ -21,38 +21,51 @@ def get_port_and_path():
         # FILE READINGG
         f = open(config_file,"r")
         lines = f.readlines()
+
+        #CHECK LINES
         if(len(lines)<2):
             exit(2)
 
 
         # SERVER PORT
+        server_port=0
 
-        server_port=lines[0]
-        if server_port.lower().startswith("server_port"):
-            x = server_port.split("=")
-            server_port=x[1]
-            if server_port.endswith("\n"):
-                server_port=server_port[:-1]
-            server_port=int(server_port)
-            
+        for x in lines:
+            if x.lower().startswith("server_port"): 
+                x = x.split("=")
+                x=x[1]
+                if x.endswith("\n"):
+                    x=x[:-1]
+                    server_port=int(x)
+        
+        if server_port!=0:
             if server_port < 1024:
                 exit(2)
+        else:
+            exit(2)
 
 
-        
         # SEND PATH
-        send_path=lines[1]
-        if send_path.lower().startswith("send_path"):
-            x = send_path.split("=")
-            send_path=x[1]
-        if send_path.endswith("\n"):
-            send_path=send_path[:-1]
-        if os.access(send_path, os.R_OK):
-            pass
+        send_path=''
+
+        for x in lines:
+            if x.lower().startswith("send_path"): 
+                x = x.split("=")
+                x=x[1]
+                if x.endswith("\n"):
+                    x=x[:-1]
+                    send_path=x
+
+        if send_path!='':
+            if os.access(send_path, os.R_OK):
+                pass
         else:
             exit(2)
         
-        # return server_port, inbox_path
+        # dir_list = os.listdir(send_path)
+        # dir_list.sort()
+        # print(dir_list)
+
         PORT=server_port
         SEND_PATH=send_path
     except:
@@ -64,14 +77,13 @@ def get_port_and_path():
 
 def setup_client_connection() -> socket.socket:
     """
-    Sets up a client socket connection to the USYD mail server for communication over a network. If 
+    Sets up a client socket connection to the server for communication over a network. If 
     the client cannot connect, after 20 seconds, the program automatically exits with an error.
     Returns:
-        A client socket connected to the USYD mail server.
+        A client socket connected to the server.
     """
     global PORT
     global IP
-    # PORT, INBOX_PATH = get_configs()
     
     get_port_and_path()
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -79,7 +91,7 @@ def setup_client_connection() -> socket.socket:
     # in use errors"
     # sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     # Sets timeout of socket: we will use this to check if we can connect to the server
-    sock.settimeout(5)
+    sock.settimeout(20)
 
     try:
         # Connct to server
@@ -95,7 +107,7 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
     Checks the status code obtained by the server in response to a message. If the server's status 
     code does not match the expected provided code, a ValueError is raised.
     Args:
-        client_sock: the client socket connected to the USYD mail server.
+        client_sock: the client socket connected to the server.
         expected_status_code: the status code we expect to receive from the server after sending a 
             message.
     Raises:
@@ -105,6 +117,11 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
     global FORMAT
     server_data = client_sock.recv(SIZE)
     server_data_str = server_data.decode(FORMAT)
+
+    #printing string
+    out_str="S: " + server_data_str[:-1]
+    print(out_str, flush=True)
+
     # Split response from server into list (on whitespace)
     server_data_ls = server_data_str.split()
 
@@ -113,58 +130,7 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
 
     if actual_status_code != expected_status_code:
         raise ValueError(f"expected code {expected_status_code}, but was {actual_status_code}")
-    else:
-        out_str="S: " + server_data_str
-        print(out_str, flush=True)
-
-# def send_data(client_socket: socket.socket, email: Email) -> None:
-#     """
-#     Sends the DATA message to the mail server, as well as the MIME data portion of the email.
-#     Args:
-#         client_socket: the client socket connected to the USYD mail server.
-#         email: the Email object containing all necessary information for a plain text email.
-#     """
-#     client_socket.send(b"DATA\r\n")
-#     check_status_code(client_socket, 354)
-
-#     mime_version = "MIME-Version: 1.0\r\n"
-
-#     date = datetime.now().astimezone()
-#     date_str = date.strftime("Date: %a, %-d %b %Y %X %z\r\n")
-
-#     from_header = f"From: {email.from_user.name} <{email.from_user.address}>\r\n"
-
-#     to_users_str = [f"{recipient.name} <{recipient.address}>" for recipient in email.recipients]
-#     to_header = "To: " + ", ".join(to_users_str) + "\r\n"
-
-#     subject = f"Subject: {email.subject}\r\n"
-
-#     content_type = "Content-Type: text/plaintext;\r\n"
-
-#     client_socket.send(mime_version.encode())
-#     client_socket.send(date_str.encode())
-#     client_socket.send(from_header.encode())
-#     client_socket.send(to_header.encode())
-#     client_socket.send(subject.encode())
-#     client_socket.send(content_type.encode())
-#     client_socket.send(b"\r\n")
-#     client_socket.send(email.body.encode() + b"\r\n")
-
-#     client_socket.send(b".\r\n")
-#     check_status_code(client_socket, 250)
-
-
-# def send_to_recipients(client_socket: socket.socket, email: Email) -> None:
-#     """
-#     Send a RCPT TO messager to the mail server for all recipients
-#     Args:
-#         client_socket: the client socket connected to the USYD mail server.
-#         email: the Email object containing all necessary information for a plain text email.
-#     """
-#     for recipient in email.recipients:
-#         rcpt_to = f"RCPT TO:<{recipient.address}>\r\n"
-#         client_socket.send(rcpt_to.encode())
-#         check_status_code(client_socket, 250)
+    
 
 
 def send_helo(client_sock: socket.socket) -> None:
@@ -173,55 +139,22 @@ def send_helo(client_sock: socket.socket) -> None:
     Args:
         client_sock: the client socket connected to the USYD mail server.
     """
-    string="HELO 127.0.0.1\r\n"
+    string="EHLO 127.0.0.1\r\n"
     client_sock.send(string.encode(FORMAT))
-    print("C: HELO 127.0.0.1", flush=True)
-
-
-# def send_email_via_server(client_sock: socket.socket, email: Email) -> None:
-#     """
-#     Communicates with the USYD mail server in order to send an email using the SMTP protocol.
-#     Args:
-#         client_sock: the client socket connected to the USYD mail server.
-#         email: the Email object containing all necessary information for a plain text email.
-#     """
-#     with client_sock:
-#         # Check initial status code after connection (220)
-#         check_status_code(client_sock, 220)
-#         print
-#         # Send the HELO message, and check the status code
-#         # send_helo(client_sock)
-#         # check_status_code(client_sock, 250)
-
-#         # Send the MAIL FROM message to the server, and check the status code
-#         from_user = email.from_user
-#         mail_from = f"MAIL FROM:<{from_user}>\r\n"
-#         client_sock.send(mail_from.encode())
-#         # check_status_code(client_sock, 250)
-
-#         # Send the RCPT TO headers for all recipients
-#         send_to_recipients(client_sock, email)
-
-#         # Send DATA, and email data to server
-#         send_data(client_sock, email)
-
-#         # Quit server gracefully by sending QUIT
-#         client_sock.send(b"QUIT\r\n")
-
-#         # Printed if no exceptions occur
-#         print("Email sent successfully!")
-
-
+    print("C: EHLO 127.0.0.1", flush=True)
 
 
 
 def main():
+
+
     client_sock = setup_client_connection()
     with client_sock:
         check_status_code(client_sock, 220)
         send_helo(client_sock)
-    # email = get_email_data()
-    # send_email_via_server(client_sock, email)
+        check_status_code(client_sock, 250)
+        check_status_code(client_sock, 250)
+        
  
 
 

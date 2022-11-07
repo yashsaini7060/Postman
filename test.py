@@ -1,9 +1,6 @@
 import os
 
 
-a='send'
-
-if os.access(a, os.R_OK):
-  print('yess')
-else:
-  print("noooo")
+dir_list = os.listdir('send')
+dir_list.sort()
+print(dir_list)
