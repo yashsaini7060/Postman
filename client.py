@@ -141,7 +141,8 @@ def send_helo(client_sock: socket.socket) -> None:
     """
     string="EHLO 127.0.0.1\r\n"
     client_sock.send(string.encode(FORMAT))
-    print("C: EHLO 127.0.0.1", flush=True)
+    string= 'C: ' + string
+    print(string, flush=True)
 
 
 
