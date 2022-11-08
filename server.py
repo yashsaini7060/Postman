@@ -75,7 +75,7 @@ def get_port_and_path():
 def send_response(conn , string):
     global FORMAT
     if string=="250 127.0.0.1\r\n250 AUTH CRAM-MD5\r\n":
-        print('S: 250 127.0.0.1\r\nS:250 AUTH CRAM-MD5\r')
+        print('S: 250 127.0.0.1\r\nS: 250 AUTH CRAM-MD5\r')
     else:
         conn.send(string.encode(FORMAT))
         if string.endswith('\n'):
@@ -175,6 +175,11 @@ def auto_res(conn,prev_data):
         else:
             send_response(conn,'501 Syntax error in parameters or arguments\r\n')
             auto_res(conn,'service ready')
+    elif prev_data=="AUTH CRAM-MD5":
+        if response=="AUTH CRAM-MD5":
+            pass
+        elif code.lower()=="mail":
+            pass
         
 
         
