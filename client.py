@@ -215,6 +215,12 @@ def send_mail(client_sock,file_path):
     print(temp,flush=True)
     check_status_code(client_sock, 250)
 
+    temp="QUIT\r\n"
+    client_sock.send(temp.encode(FORMAT))
+    temp="C: "+ temp[:-1]
+    print(temp,flush=True)
+    check_status_code(client_sock, 221)
+
     
 
 
