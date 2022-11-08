@@ -240,6 +240,7 @@ def initialization(file_path):
 def check_file(file_path):
     f = open(file_path, "r")
     lines = f.readlines()
+    return_value=''
     try:
         mail=lines[0].split(" ")
         if mail[0].lower()=='from:\n':
@@ -257,7 +258,8 @@ def check_file(file_path):
         else:
             exit(0)
         
-        mail=lines[1].split(" ")
+
+        mail=lines[2].split(" ")
         if mail[0].lower()=='date:\n':
             exit(0)
         if mail[0].lower()=="date:" and mail[1]!="" and mail[0]!="\n":
@@ -265,7 +267,7 @@ def check_file(file_path):
         else:
             exit(0)
 
-        mail=lines[1].split(" ")
+        mail=lines[3].split(" ")
         if mail[0].lower()=='subject:\n':
             exit(0)
         if mail[0].lower()=="subject:" and mail[1]!="" and mail[0]!="\n":
@@ -273,12 +275,14 @@ def check_file(file_path):
         else:
             exit(0)
 
-        return file_path
+        return_value=file_path
     except:
         out_str = os.path.abspath(file_path)
         out_str="C: "+ out_str +": Bad formation"
         print(out_str, flush=True)
-        return 'err'
+        return_value='err'
+
+    return return_value
 
 
 def main():
@@ -291,6 +295,7 @@ def main():
     while i< len(dir_list):
         path=SEND_PATH+'/'+dir_list[i]
         val=check_file(path)
+        # print(val)
         if val!='err':
             valid_files.append(val)
         # initialization(path)
