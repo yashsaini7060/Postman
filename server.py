@@ -11,7 +11,7 @@ PORT=0
 INBOX_PATH=''
 EHOL=False
 AUTH=False
-FILEDATA=[]
+FILE_DATA=[]
 
 
 
@@ -155,7 +155,7 @@ def setup_client_connection():
 def auto_res(conn,prev_data):
     global EHOL
     global AUTH
-    global FILEDATA
+    global FILE_DATA
 
     code, response=get_response(conn)
 
@@ -165,6 +165,9 @@ def auto_res(conn,prev_data):
     elif response.lower()=="noop\r":
         send_response(conn,'250 Requested mail action okay completed\r\n')
     elif response.lower()=="reset\r":
+        EHOL=False
+        AUTH=False
+        FILE_DATA.clear()
         send_response(conn,'250 Requested mail action okay completed\r\n')
     elif prev_data=="service ready":
         if response.lower()=="ehlo 127.0.0.1\r":
