@@ -74,16 +74,14 @@ def get_port_and_path():
 
 def send_response(conn , string):
     global FORMAT
-    conn.send(string.encode(FORMAT))
-    if string=="250 127.0.0.1\n250 AUTH CRAM-MD5\r\n":
-        print('S: 250 127.0.0.1\r')
-        print('S: 250 AUTH CRAM-MD5\r')
+    if string=="250 127.0.0.1\r\n250 AUTH CRAM-MD5\r\n":
+        print('S: 250 127.0.0.1\r\nS:250 AUTH CRAM-MD5\r')
     else:
+        conn.send(string.encode(FORMAT))
         if string.endswith('\n'):
-            string=string[:-1]
+                string=string[:-1]
         new_str="S: " + string
         print(new_str, flush=True)
-    
     
 
 def get_response(conn):
@@ -91,7 +89,6 @@ def get_response(conn):
     client_response= conn.recv(SIZE).decode(FORMAT)
     if not client_response:
         print("S: Connection lost", flush=True)
-        return "disconn", "disconn"
     else:
         if client_response.endswith('\n'):
             client_response=client_response[:-1]
@@ -102,6 +99,37 @@ def get_response(conn):
 
         return client_code[0], client_response
 
+
+
+
+
+
+def check_status_code(conn, expected_status_code: str) -> None:
+
+    global FORMAT
+    global SIZE
+    client_response= conn.recv(SIZE).decode(FORMAT)
+
+    if client_response=='':
+        print("C: Connection lost", flush=True)
+        exit(3)
+
+    if client_response.endswith('\n'):
+            client_response=client_response[:-1]
+    out_str = "C: " + client_response
+    print(out_str, flush=True)
+
+    client_response = client_response.split()
+    actual_status_code = client_response[0].lower()
+
+    if(expected_status_code==""):
+        pass
+    else:  
+        if actual_status_code != expected_status_code.lower():
+            raise ValueError(f"expected code {expected_status_code}, but was {actual_status_code}")
+    
+
+    
 
 
 def setup_client_connection():
@@ -134,33 +162,20 @@ def auto_res(conn,prev_data):
 
     code, response=get_response(conn)
 
-    while True:
-        if response.lower()=="disconn\r":
-            break
-        if response.lower()=="quit\r":
-            send_response(conn,'221 Service closing transmission channel\r\n')
-            break
-        elif response.lower()=="noop\r":
-            send_response(conn,'250 Requested mail action okay completed\r\n')
-        elif prev_data=="service ready":
-            if response.lower()=="ehlo 127.0.0.1\r":
-                send_response(conn,'250 127.0.0.1\n250 AUTH CRAM-MD5\r\n')
-                EHOL=True
-                # auto_res(conn,'AUTH CRAM-MD5')
-                code, response=get_response(conn)
-                prev_data='AUTH CRAM-MD5'
-            else:
-                send_response(conn,'501 Syntax error in parameters or arguments\r\n')
-                # auto_res(conn,'service ready')
-                code, response=get_response(conn)
-                prev_data='service ready'
-        elif prev_data=='AUTH CRAM-MD5':
-            if response.lower()=="auth cram-md5\r":
-                pass
-            elif code.lower()=="mail":
-                pass
 
-
+    if response.lower()=="quit\r":
+        send_response(conn,'221 Service closing transmission channel\r\n')
+    elif response.lower()=="noop\r":
+        send_response(conn,'250 Requested mail action okay completed\r\n')
+    elif prev_data=="service ready":
+        if response.lower()=="ehlo 127.0.0.1\r":
+            send_response(conn,'250 127.0.0.1\r\n250 AUTH CRAM-MD5\r\n')
+            EHOL=True
+            auto_res(conn,'AUTH CRAM-MD5')
+        else:
+            send_response(conn,'501 Syntax error in parameters or arguments\r\n')
+            auto_res(conn,'service ready')
+        
 
         
 
@@ -178,7 +193,7 @@ def main():
 
     """ Closing the connection from the client. """
     conn.close()
-
+    # print(f"[DISCONNECTED] {addr} disconnected.")
 
 if __name__ == "__main__":
     main() 
