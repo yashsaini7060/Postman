@@ -132,7 +132,7 @@ def setup_client_connection():
     
     """ Staring a TCP socket. """
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     """ Bind the IP and PORT to the server. """
 
     server.bind((IP, PORT))
