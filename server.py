@@ -166,8 +166,7 @@ def auto_res(conn,prev_data):
         send_response(conn,'250 Requested mail action okay completed\r\n')
     elif prev_data=="service ready":
         if response.lower()=="ehlo 127.0.0.1\r":
-            send_response(conn,'250 127.0.0.1\r\n')
-            send_response(conn,'250 AUTH CRAM-MD5\r\n')
+            send_response(conn,'250 127.0.0.1\n250 AUTH CRAM-MD5\r\n')
             EHOL=True
             auto_res(conn,'AUTH CRAM-MD5')
         else:
