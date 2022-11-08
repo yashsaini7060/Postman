@@ -195,11 +195,15 @@ def send_mail(client_sock,file_path):
     i=2
     while i<len(lines):
         temp=lines[i]
-        if temp.endswith('\n'):
+        if i!=len(lines)-1:
             temp=temp[:-1]
             temp=temp+"\r\n"
-        client_sock.send(temp.encode(FORMAT))
-        temp="C: "+ temp[:-1]
+            client_sock.send(temp.encode(FORMAT))
+            temp="C: "+ temp[:-1]
+        else:
+            temp=temp+"\r\n"
+            client_sock.send(temp.encode(FORMAT))
+            temp="C: "+ temp[:-1]
         print(temp,flush=True)
         check_status_code(client_sock, 354)
         i=i+1
