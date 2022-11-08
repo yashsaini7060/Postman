@@ -160,7 +160,7 @@ def auto_res(conn,prev_data):
     code, response=get_response(conn)
 
 
-    if response.lower()=="quit":
+    if response.lower()=="quit\r":
         send_response(conn,'221 Service closing transmission channel\r\n')
     elif prev_data=="service ready":
         if response.lower()=="ehlo 127.0.0.1\r":
