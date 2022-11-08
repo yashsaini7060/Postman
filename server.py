@@ -107,15 +107,52 @@ def send_data(conn , string):
 
 def get_response(conn):
     client_response= conn.recv(SIZE).decode(FORMAT)
+    if client_response.endswith('\n'):
+            client_response=client_response[:-1]
+    client_response = "C: " + client_response
+    print(client_response, flush=True)
     return client_response
 
-def log_client(response):
-    if response.endswith('\n'):
-            response=response[:-1]
-    response = "C: " + response
-    print(response, flush=True)
+
+
+
+
+def check_status_code(conn, expected_status_code: str) -> None:
+
+    # Get response from server
+    global FORMAT
+    global SIZE
+    client_response= conn.recv(SIZE).decode(FORMAT)
+
+    if client_response=='':
+        print("C: Connection lost", flush=True)
+        exit(3)
+
+    if client_response.endswith('\n'):
+            client_response=client_response[:-1]
+    out_str = "C: " + client_response
+    print(out_str, flush=True)
+
+    client_response = client_response.split()
+    actual_status_code = client_response[0].lower()
+
+    if(expected_status_code==""):
+        pass
+    else:  
+        if actual_status_code != expected_status_code.lower():
+            raise ValueError(f"expected code {expected_status_code}, but was {actual_status_code}")
     
 
+    
+def send_response(conn , res):
+    res=res.split(" ")
+    res=res[0]
+    print(res)
+    if(res=="MAIL"):
+        pass
+        
+    # data=0
+    # return data
 
 def main():
     global PORT
@@ -138,18 +175,25 @@ def main():
 
         # Service redy messagess
         send_data(conn, "220 Service ready\r\n")
-        ehol_response = get_response(conn)
-        log_client(ehol_response)
-        if ehol_response=="EHLO 127.0.0.1\r\n":
-            send_data(conn, "250 127.0.0.1\r\n")
-        mail=get_response(conn)
-        log_client(mail)
-        mail=mail.split(" ")
-        mail=mail[0]
-        if mail.upper()=="MAIL":
-            send_data(conn, "250 Request mail action okay completed\r\n")
-
-
+        check_status_code(conn, "EHLO")
+        send_data(conn, "250 127.0.0.1\r\n")
+        # send_response(conn)
+        check_status_code(conn, "MAIL")
+        send_data(conn, "250 Requested mail action okay completed\r\n")
+        check_status_code(conn, "RCPT")
+        send_data(conn, "250 Requested mail action okay completed\r\n")
+        check_status_code(conn, "RCPT")
+        send_data(conn, "250 Requested mail action okay completed\r\n")
+        check_status_code(conn, "DATA")
+        send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
+        check_status_code(conn, "")
+        send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
+        check_status_code(conn, "")
+        send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
+        check_status_code(conn, "")
+        send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
+        check_status_code(conn, "")
+        send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
 
 
 

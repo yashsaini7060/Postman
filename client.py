@@ -95,7 +95,7 @@ def setup_client_connection() -> socket.socket:
         
         sock.connect((IP,PORT))
     except:
-        print("C: Cannot establish connection")
+        print("C: Cannot establish connection", flush=True)
         sys.exit(3)
         
 
@@ -114,10 +114,11 @@ def check_status_code(client_sock: socket.socket, expected_status_code: int) -> 
     """
     # Get response from server
     global FORMAT
+    global SIZE
     server_data = client_sock.recv(SIZE)
     server_data_str = server_data.decode(FORMAT)
     if server_data_str=='':
-        print("server disconnected")
+        print("C: Connection lost", flush=True)
         exit(3)
     #printing string
     out_str="S: " + server_data_str[:-1]
@@ -148,17 +149,66 @@ def send_helo(client_sock: socket.socket) -> None:
 
 def send_mail(client_sock,file_path):
     global FORMAT
-    print(file_path)
     f = open(file_path, "r")
     lines = f.readlines()
+
+    #MAIL
     mail=lines[0].split(" ")
     mail=mail[1]
-
-    mail="MAIL FROM:" + mail
+    if mail.endswith('\n'):
+        mail=mail[:-1]
+    mail="MAIL FROM:" + mail + "\r\n"
     client_sock.send(mail.encode(FORMAT))
-    mail="C: "+ mail
-    print(mail)
+    mail="C: "+ mail[:-1]
+    print(mail,flush=True)
+    check_status_code(client_sock, 250)
+
+    #RECIVER MAIL
+    mail=lines[1]
+    mail=mail.split(" ")
+    recvr_mail=mail[1]
+    recvr_mail=recvr_mail.split(",")
+    # print(recvr_mail)
+    i=0
+    while i < len(recvr_mail):
+        
+        temp=recvr_mail[i]
+        # print(temp)
+        if temp.endswith("\n"):
+            temp=temp[:-1]
+        # print(temp)
+        temp="RCPT TO:" + temp + "\r\n"
+        client_sock.send(temp.encode(FORMAT))
+        temp="C: "+ temp[:-1]
+        print(temp,flush=True)
+        check_status_code(client_sock, 250)
+        i=i+1
     
+
+    #DATA
+    temp="DATA\r\n"
+    client_sock.send(temp.encode(FORMAT))
+    temp="C: "+ temp[:-1]
+    print(temp,flush=True)
+    check_status_code(client_sock, 354)
+
+    i=2
+    while i<len(lines):
+        temp=lines[i]
+        if temp.endswith('\n'):
+            temp=temp[:-1]
+            temp=temp+"\r\n"
+        client_sock.send(temp.encode(FORMAT))
+        temp="C: "+ temp[:-1]
+        print(temp,flush=True)
+        check_status_code(client_sock, 354)
+        i=i+1
+    
+    # ennd of data
+    temp=".\r\n"
+    client_sock.send(temp.encode(FORMAT))
+    temp="C: "+ temp[:-1]
+    print(temp,flush=True)
     check_status_code(client_sock, 250)
 
     
@@ -189,20 +239,6 @@ def main():
         
         i=i+1
     
-        
-        
-        
-        # dir_list = os.listdir(SEND_PATH)
-        # dir_list.sort()
-        # print(dir_list)
-        # i=0
-        # while i<len(dir_list):
-        #     file_name=dir_list[i]
-        #     path=SEND_PATH+'\\'+file_name
-        #     print(file_name)
-        #     send_mail(client_sock, path)
-        #     i=i+1
-        
  
 
 
