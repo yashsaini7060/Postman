@@ -186,32 +186,12 @@ def main():
 
     send_response(conn, "220 Service ready\r\n")
     auto_res(conn,'service ready')
-    # check_status_code(conn, "EHLO")
-    # send_data(conn, "250 127.0.0.1\r\n")
-    # # send_response(conn)
-    # check_status_code(conn, "MAIL")
-    # send_data(conn, "250 Requested mail action okay completed\r\n")
-    # check_status_code(conn, "RCPT")
-    # send_data(conn, "250 Requested mail action okay completed\r\n")
-    # check_status_code(conn, "RCPT")
-    # send_data(conn, "250 Requested mail action okay completed\r\n")
-    # check_status_code(conn, "DATA")
-    # print("dataaaaaaaaa")
-    # send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
-    # check_status_code(conn, "")
-    # send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
-    # check_status_code(conn, "")
-    # send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
-    # check_status_code(conn, "")
-    # send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
-    # check_status_code(conn, "")
-    # send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
 
 
 
     """ Closing the connection from the client. """
     conn.close()
-    # print(f"[DISCONNECTED] {addr} disconnected.")
+
 
 if __name__ == "__main__":
     main() 
