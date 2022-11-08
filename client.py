@@ -238,16 +238,20 @@ def initialization(file_path):
 
 
 def main():
-    global SEND_PATH
-    get_port_and_path()
-    dir_list = os.listdir(SEND_PATH)
-    dir_list.sort()
-    i=0
-    while i< len(dir_list):
-        path=SEND_PATH+'/'+dir_list[i]
-        initialization(path)
+    a='./C/invalid_01.send/01_bad.txt'
+    f = open(a,'r')
+    lines=f.readlines()
+    print(lines)
+    # global SEND_PATH
+    # get_port_and_path()
+    # dir_list = os.listdir(SEND_PATH)
+    # dir_list.sort()
+    # i=0
+    # while i< len(dir_list):
+    #     path=SEND_PATH+'/'+dir_list[i]
+    #     initialization(path)
         
-        i=i+1
+    #     i=i+1
     
  
 
