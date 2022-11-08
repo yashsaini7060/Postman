@@ -91,6 +91,7 @@ def get_response(conn):
     client_response= conn.recv(SIZE).decode(FORMAT)
     if not client_response:
         print("S: Connection lost", flush=True)
+        return "disconn", "disconn"
     else:
         if client_response.endswith('\n'):
             client_response=client_response[:-1]
@@ -133,25 +134,31 @@ def auto_res(conn,prev_data):
 
     code, response=get_response(conn)
 
-
-    if response.lower()=="quit\r":
-        send_response(conn,'221 Service closing transmission channel\r\n')
-    elif response.lower()=="noop\r":
-        send_response(conn,'250 Requested mail action okay completed\r\n')
-    elif prev_data=="service ready":
-        if response.lower()=="ehlo 127.0.0.1\r":
-            send_response(conn,'250 127.0.0.1\n250 AUTH CRAM-MD5\r\n')
-            EHOL=True
-            auto_res(conn,'AUTH CRAM-MD5')
-        else:
-            send_response(conn,'501 Syntax error in parameters or arguments\r\n')
-            auto_res(conn,'service ready')
-
-    elif prev_data=='AUTH CRAM-MD5':
-        if response.lower()=="auth cram-md5\r":
-            pass
-        elif code.lower()=="mail":
-            pass
+    while True:
+        if response.lower()=="disconn\r":
+            break
+        if response.lower()=="quit\r":
+            send_response(conn,'221 Service closing transmission channel\r\n')
+            break
+        elif response.lower()=="noop\r":
+            send_response(conn,'250 Requested mail action okay completed\r\n')
+        elif prev_data=="service ready":
+            if response.lower()=="ehlo 127.0.0.1\r":
+                send_response(conn,'250 127.0.0.1\n250 AUTH CRAM-MD5\r\n')
+                EHOL=True
+                # auto_res(conn,'AUTH CRAM-MD5')
+                code, response=get_response(conn)
+                prev_data='AUTH CRAM-MD5'
+            else:
+                send_response(conn,'501 Syntax error in parameters or arguments\r\n')
+                # auto_res(conn,'service ready')
+                code, response=get_response(conn)
+                prev_data='service ready'
+        elif prev_data=='AUTH CRAM-MD5':
+            if response.lower()=="auth cram-md5\r":
+                pass
+            elif code.lower()=="mail":
+                pass
 
 
 
