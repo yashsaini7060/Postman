@@ -276,8 +276,9 @@ def check_file(file_path):
         return file_path
     except:
         out_str = os.path.abspath(file_path)
-        out_str="C: "+out_str
+        out_str="C: "+ out_str +": Bad formation"
         print(out_str, flush=True)
+        return 'err'
 
 
 def main():
@@ -290,17 +291,22 @@ def main():
     while i< len(dir_list):
         path=SEND_PATH+'/'+dir_list[i]
         val=check_file(path)
-        valid_files.append(val)
+        if val!='err':
+            valid_files.append(val)
         # initialization(path)
         
         i=i+1
     
-    i=0
-    while i< len(valid_files):
-        path=SEND_PATH+'/'+dir_list[i]
-        initialization(path)
-        
-        i=i+1
+
+    if not valid_files:
+        pass
+    else:
+        i=0
+        while i< len(valid_files):
+            path=SEND_PATH+'/'+dir_list[i]
+            initialization(path)
+            
+            i=i+1
     
  
 
