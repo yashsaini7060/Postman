@@ -1,5 +1,5 @@
 import os
 
-a='DATA'
+a='auth cram-md5'
 
-print(a.split(" "))
+print(a.upper())

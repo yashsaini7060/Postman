@@ -167,13 +167,16 @@ def auto_res(conn,prev_data):
     elif prev_data=="service ready":
         if response.lower()=="ehlo 127.0.0.1\r":
             send_response(conn,'250 127.0.0.1\r\n')
-            EHOL=True
             send_response(conn,'250 AUTH CRAM-MD5\r\n')
+            EHOL=True
             auto_res(conn,'AUTH CRAM-MD5')
         else:
             send_response(conn,'501 Syntax error in parameters or arguments\r\n')
             auto_res(conn,'service ready')
-        
+    elif prev_data=='AUTH CRAM-MD5':
+        if response.lower()=="auth cram-md5\r":
+            pass
+
 
         
 
