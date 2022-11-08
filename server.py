@@ -162,14 +162,14 @@ def auto_res(conn,prev_data):
 
     if response.lower()=="quit\r":
         send_response(conn,'221 Service closing transmission channel\r\n')
+    elif response.lower()=="noop\r":
+        send_response(conn,'250 Requested mail action okay completed\r\n')
     elif prev_data=="service ready":
         if response.lower()=="ehlo 127.0.0.1\r":
             send_response(conn,'250 127.0.0.1\r\n')
             EHOL=True
             send_response(conn,'250 AUTH CRAM-MD5\r\n')
             auto_res(conn,'AUTH CRAM-MD5')
-        elif response.lower()=="noop":
-            send_response(conn,'250 Requested mail action okay completed\r\n')
         else:
             send_response(conn,'501 Syntax error in parameters or arguments\r\n')
             auto_res(conn,'service ready')
