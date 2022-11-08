@@ -84,18 +84,14 @@ def send_response(conn , string):
 def get_response(conn):
 
     client_response= conn.recv(SIZE).decode(FORMAT)
-    if not client_response:
-        print("S: Connection lost", flush=True)
-        return '0', '1'
-    else:
-        if client_response.endswith('\n'):
-            client_response=client_response[:-1]
-        out_str = "C: " + client_response
-        print(out_str, flush=True)
+    if client_response.endswith('\n'):
+        client_response=client_response[:-1]
+    out_str = "C: " + client_response
+    print(out_str, flush=True)
 
-        client_code=client_response.split(" ")
+    client_code=client_response.split(" ")
 
-        return client_code[0], client_response
+    return client_code[0], client_response
 
 
 
