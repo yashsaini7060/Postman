@@ -153,74 +153,84 @@ def send_mail(client_sock,file_path):
     lines = f.readlines()
 
     #MAIL
-    mail=lines[0].split(" ")
-    mail=mail[1]
-    if mail.endswith('\n'):
-        mail=mail[:-1]
-    mail="MAIL FROM:" + mail + "\r\n"
-    client_sock.send(mail.encode(FORMAT))
-    mail="C: "+ mail[:-1]
-    print(mail,flush=True)
-    check_status_code(client_sock, 250)
+    try:
+        mail=lines[0].split(" ")
+        if mail[0].lower()=="from:" and mail[1]!="":
+            mail=mail[1]
+            if mail.endswith('\n'):
+                mail=mail[:-1]
+            mail="MAIL FROM:" + mail + "\r\n"
+            client_sock.send(mail.encode(FORMAT))
+            mail="C: "+ mail[:-1]
+            print(mail,flush=True)
+            check_status_code(client_sock, 250)
+        else:
+            out_str="C: "+file_path
+            print(out_str, flush=True)
 
-    #RECIVER MAIL
-    mail=lines[1]
-    mail=mail.split(" ")
-    recvr_mail=mail[1]
-    recvr_mail=recvr_mail.split(",")
-    # print(recvr_mail)
-    i=0
-    while i < len(recvr_mail):
+        #RECIVER MAIL
+        mail=lines[1]
+        mail=mail.split(" ")
+        if mail[0].lower()=="to:" and mail[1]!="":
+            recvr_mail=mail[1]
+            recvr_mail=recvr_mail.split(",")
+            # print(recvr_mail)
+            i=0
+            while i < len(recvr_mail):
+                
+                temp=recvr_mail[i]
+                # print(temp)
+                if temp.endswith("\n"):
+                    temp=temp[:-1]
+                # print(temp)
+                temp="RCPT TO:" + temp + "\r\n"
+                client_sock.send(temp.encode(FORMAT))
+                temp="C: "+ temp[:-1]
+                print(temp,flush=True)
+                check_status_code(client_sock, 250)
+                i=i+1
+        else:
+            out_str="C: "+file_path
+            print(out_str, flush=True)
+
+        #DATA
+        temp="DATA\r\n"
+        client_sock.send(temp.encode(FORMAT))
+        temp="C: "+ temp[:-1]
+        print(temp,flush=True)
+        check_status_code(client_sock, 354)
+
+        i=2
+        while i<len(lines):
+            temp=lines[i]
+            if i!=len(lines)-1:
+                temp=temp[:-1]
+                temp=temp+"\r\n"
+                client_sock.send(temp.encode(FORMAT))
+                temp="C: "+ temp[:-1]
+            else:
+                temp=temp+"\r\n"
+                client_sock.send(temp.encode(FORMAT))
+                temp="C: "+ temp[:-1]
+            print(temp,flush=True)
+            check_status_code(client_sock, 354)
+            i=i+1
         
-        temp=recvr_mail[i]
-        # print(temp)
-        if temp.endswith("\n"):
-            temp=temp[:-1]
-        # print(temp)
-        temp="RCPT TO:" + temp + "\r\n"
+        # ennd of data
+        temp=".\r\n"
         client_sock.send(temp.encode(FORMAT))
         temp="C: "+ temp[:-1]
         print(temp,flush=True)
         check_status_code(client_sock, 250)
-        i=i+1
-    
 
-    #DATA
-    temp="DATA\r\n"
-    client_sock.send(temp.encode(FORMAT))
-    temp="C: "+ temp[:-1]
-    print(temp,flush=True)
-    check_status_code(client_sock, 354)
-
-    i=2
-    while i<len(lines):
-        temp=lines[i]
-        if i!=len(lines)-1:
-            temp=temp[:-1]
-            temp=temp+"\r\n"
-            client_sock.send(temp.encode(FORMAT))
-            temp="C: "+ temp[:-1]
-        else:
-            temp=temp+"\r\n"
-            client_sock.send(temp.encode(FORMAT))
-            temp="C: "+ temp[:-1]
+        temp="QUIT\r\n"
+        client_sock.send(temp.encode(FORMAT))
+        temp="C: "+ temp[:-1]
         print(temp,flush=True)
-        check_status_code(client_sock, 354)
-        i=i+1
-    
-    # ennd of data
-    temp=".\r\n"
-    client_sock.send(temp.encode(FORMAT))
-    temp="C: "+ temp[:-1]
-    print(temp,flush=True)
-    check_status_code(client_sock, 250)
-
-    temp="QUIT\r\n"
-    client_sock.send(temp.encode(FORMAT))
-    temp="C: "+ temp[:-1]
-    print(temp,flush=True)
-    check_status_code(client_sock, 221)
-
+        check_status_code(client_sock, 221)
+    except:
+        out_str="C: "+file_path
+        print(out_str, flush=True)
     
 
 
@@ -238,20 +248,17 @@ def initialization(file_path):
 
 
 def main():
-    a='./C/invalid_01.send/01_bad.txt'
-    f = open(a,'r')
-    lines=f.readlines()
-    print(lines)
-    # global SEND_PATH
-    # get_port_and_path()
-    # dir_list = os.listdir(SEND_PATH)
-    # dir_list.sort()
-    # i=0
-    # while i< len(dir_list):
-    #     path=SEND_PATH+'/'+dir_list[i]
-    #     initialization(path)
+
+    global SEND_PATH
+    get_port_and_path()
+    dir_list = os.listdir(SEND_PATH)
+    dir_list.sort()
+    i=0
+    while i< len(dir_list):
+        path=SEND_PATH+'/'+dir_list[i]
+        initialization(path)
         
-    #     i=i+1
+        i=i+1
     
  
 
