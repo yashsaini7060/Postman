@@ -10,7 +10,7 @@ SIZE = 1024
 PORT=0
 INBOX_PATH=''
 EHOL=False
-AUTH=True
+AUTH=False
 FILEDATA=[]
 
 
@@ -160,13 +160,14 @@ def auto_res(conn,prev_data):
     if prev_data=="service ready":
         if response.lower()=="ehlo 127.0.0.1\r":
             send_response(conn,'250 127.0.0.1\r\n')
+            EHOL=True
             send_response(conn,'250 AUTH CRAM-MD5\r\n')
-            # auto_res(conn,'service ready')
+            auto_res(conn,'AUTH CRAM-MD5')
         elif response.lower()=="quit":
             send_response(conn,'221 Service closing transmission channel\r\n')
         else:
             send_response(conn,'501 Syntax error in parameters or arguments\r\n')
-            # auto_res(conn,'service ready')
+            auto_res(conn,'service ready')
         
 
         
