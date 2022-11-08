@@ -75,10 +75,15 @@ def get_port_and_path():
 def send_response(conn , string):
     global FORMAT
     conn.send(string.encode(FORMAT))
-    if string.endswith('\n'):
+    if string=="250 127.0.0.1\n250 AUTH CRAM-MD5\r\n":
+        print('S: 250 127.0.0.1')
+        print('S:250 AUTH CRAM-MD5\r')
+    else:
+        if string.endswith('\n'):
             string=string[:-1]
-    new_str="S: " + string
-    print(new_str, flush=True)
+        new_str="S: " + string
+        print(new_str, flush=True)
+    
     
 
 def get_response(conn):
