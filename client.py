@@ -256,9 +256,27 @@ def check_file(file_path):
             pass
         else:
             exit(0)
+        
+        mail=lines[1].split(" ")
+        if mail[0].lower()=='date:\n':
+            exit(0)
+        if mail[0].lower()=="date:" and mail[1]!="" and mail[0]!="\n":
+            pass
+        else:
+            exit(0)
 
+        mail=lines[1].split(" ")
+        if mail[0].lower()=='subject:\n':
+            exit(0)
+        if mail[0].lower()=="subject:" and mail[1]!="" and mail[0]!="\n":
+            pass
+        else:
+            exit(0)
+
+        return file_path
     except:
-        out_str="C: "+file_path
+        out_str = os.path.abspath(file_path)
+        out_str="C: "+out_str
         print(out_str, flush=True)
 
 
@@ -267,16 +285,17 @@ def main():
     get_port_and_path()
     dir_list = os.listdir(SEND_PATH)
     dir_list.sort()
+    valid_files=[]
     i=0
     while i< len(dir_list):
         path=SEND_PATH+'/'+dir_list[i]
-        check_file(path)
+        valid_files=check_file(path)
         # initialization(path)
         
         i=i+1
     
     i=0
-    while i< len(dir_list):
+    while i< len(valid_files):
         path=SEND_PATH+'/'+dir_list[i]
         initialization(path)
         
