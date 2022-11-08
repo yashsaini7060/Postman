@@ -9,6 +9,13 @@ FORMAT = "ascii"
 SIZE = 1024
 PORT=0
 INBOX_PATH=''
+EHOL=False
+AUTH=True
+FILEDATA=[]
+
+
+
+
 def get_port_and_path():
     global PORT
     global INBOX_PATH
@@ -65,7 +72,7 @@ def get_port_and_path():
 
 
 
-def send_data(conn , string):
+def send_response(conn , string):
     global FORMAT
     conn.send(string.encode(FORMAT))
     if string.endswith('\n'):
@@ -75,12 +82,17 @@ def send_data(conn , string):
     
 
 def get_response(conn):
+    client_response="ooo"
     client_response= conn.recv(SIZE).decode(FORMAT)
     if client_response.endswith('\n'):
             client_response=client_response[:-1]
-    client_response = "C: " + client_response
-    print(client_response, flush=True)
-    return client_response
+    out_str = "C: " + client_response
+    print(out_str, flush=True)
+
+    client_code=client_response.split(" ")
+
+    return client_code[0], client_response
+
 
 
 
@@ -88,7 +100,6 @@ def get_response(conn):
 
 def check_status_code(conn, expected_status_code: str) -> None:
 
-    # Get response from server
     global FORMAT
     global SIZE
     client_response= conn.recv(SIZE).decode(FORMAT)
@@ -113,15 +124,6 @@ def check_status_code(conn, expected_status_code: str) -> None:
     
 
     
-def send_response(conn , res):
-    res=res.split(" ")
-    res=res[0]
-    print(res)
-    if(res=="MAIL"):
-        pass
-        
-    # data=0
-    # return data
 
 
 def setup_client_connection():
@@ -143,33 +145,61 @@ def setup_client_connection():
 
     return conn
 
+
+
+
+
+def auto_res(conn,prev_data):
+    global EHOL
+    global AUTH
+    global FILEDATA
+
+    code, response=get_response(conn)
+
+
+    if prev_data=="service ready":
+        if response.lower()=="ehlo 127.0.0.1\r":
+            send_response(conn,'250 127.0.0.1\r\n')
+            send_response(conn,'250 AUTH CRAM-MD5\r\n')
+            # auto_res(conn,'service ready')
+        elif response.lower()=="quit":
+            send_response(conn,'221 Service closing transmission channel\r\n')
+        else:
+            send_response(conn,'501 Syntax error in parameters or arguments\r\n')
+            # auto_res(conn,'service ready')
+        
+
+        
+
+
+
+
 def main():
     get_port_and_path()
     conn = setup_client_connection()
 
-
-        # Service redy messagess
-    send_data(conn, "220 Service ready\r\n")
-    check_status_code(conn, "EHLO")
-    send_data(conn, "250 127.0.0.1\r\n")
-    # send_response(conn)
-    check_status_code(conn, "MAIL")
-    send_data(conn, "250 Requested mail action okay completed\r\n")
-    check_status_code(conn, "RCPT")
-    send_data(conn, "250 Requested mail action okay completed\r\n")
-    check_status_code(conn, "RCPT")
-    send_data(conn, "250 Requested mail action okay completed\r\n")
-    check_status_code(conn, "DATA")
-    print("dataaaaaaaaa")
-    send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
-    check_status_code(conn, "")
-    send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
-    check_status_code(conn, "")
-    send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
-    check_status_code(conn, "")
-    send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
-    check_status_code(conn, "")
-    send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
+    send_response(conn, "220 Service ready\r\n")
+    auto_res(conn,'service ready')
+    # check_status_code(conn, "EHLO")
+    # send_data(conn, "250 127.0.0.1\r\n")
+    # # send_response(conn)
+    # check_status_code(conn, "MAIL")
+    # send_data(conn, "250 Requested mail action okay completed\r\n")
+    # check_status_code(conn, "RCPT")
+    # send_data(conn, "250 Requested mail action okay completed\r\n")
+    # check_status_code(conn, "RCPT")
+    # send_data(conn, "250 Requested mail action okay completed\r\n")
+    # check_status_code(conn, "DATA")
+    # print("dataaaaaaaaa")
+    # send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
+    # check_status_code(conn, "")
+    # send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
+    # check_status_code(conn, "")
+    # send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
+    # check_status_code(conn, "")
+    # send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
+    # check_status_code(conn, "")
+    # send_data(conn, "354 Start mail input and <CRLF>.<CRLF>\r\n")
 
 
 
