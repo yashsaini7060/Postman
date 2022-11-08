@@ -289,7 +289,8 @@ def main():
     i=0
     while i< len(dir_list):
         path=SEND_PATH+'/'+dir_list[i]
-        valid_files=check_file(path)
+        val=check_file(path)
+        valid_files.append(val)
         # initialization(path)
         
         i=i+1
