@@ -153,84 +153,74 @@ def send_mail(client_sock,file_path):
     lines = f.readlines()
 
     #MAIL
-    try:
-        mail=lines[0].split(" ")
-        if mail[0].lower()=="from:" and mail[1]!="":
-            mail=mail[1]
-            if mail.endswith('\n'):
-                mail=mail[:-1]
-            mail="MAIL FROM:" + mail + "\r\n"
-            client_sock.send(mail.encode(FORMAT))
-            mail="C: "+ mail[:-1]
-            print(mail,flush=True)
-            check_status_code(client_sock, 250)
-        else:
-            out_str="C: "+file_path
-            print(out_str, flush=True)
+    mail=lines[0].split(" ")
+    mail=mail[1]
+    if mail.endswith('\n'):
+        mail=mail[:-1]
+    mail="MAIL FROM:" + mail + "\r\n"
+    client_sock.send(mail.encode(FORMAT))
+    mail="C: "+ mail[:-1]
+    print(mail,flush=True)
+    check_status_code(client_sock, 250)
 
-        #RECIVER MAIL
-        mail=lines[1]
-        mail=mail.split(" ")
-        if mail[0].lower()=="to:" and mail[1]!="":
-            recvr_mail=mail[1]
-            recvr_mail=recvr_mail.split(",")
-            # print(recvr_mail)
-            i=0
-            while i < len(recvr_mail):
-                
-                temp=recvr_mail[i]
-                # print(temp)
-                if temp.endswith("\n"):
-                    temp=temp[:-1]
-                # print(temp)
-                temp="RCPT TO:" + temp + "\r\n"
-                client_sock.send(temp.encode(FORMAT))
-                temp="C: "+ temp[:-1]
-                print(temp,flush=True)
-                check_status_code(client_sock, 250)
-                i=i+1
-        else:
-            out_str="C: "+file_path
-            print(out_str, flush=True)
-
-        #DATA
-        temp="DATA\r\n"
-        client_sock.send(temp.encode(FORMAT))
-        temp="C: "+ temp[:-1]
-        print(temp,flush=True)
-        check_status_code(client_sock, 354)
-
-        i=2
-        while i<len(lines):
-            temp=lines[i]
-            if i!=len(lines)-1:
-                temp=temp[:-1]
-                temp=temp+"\r\n"
-                client_sock.send(temp.encode(FORMAT))
-                temp="C: "+ temp[:-1]
-            else:
-                temp=temp+"\r\n"
-                client_sock.send(temp.encode(FORMAT))
-                temp="C: "+ temp[:-1]
-            print(temp,flush=True)
-            check_status_code(client_sock, 354)
-            i=i+1
+    #RECIVER MAIL
+    mail=lines[1]
+    mail=mail.split(" ")
+    recvr_mail=mail[1]
+    recvr_mail=recvr_mail.split(",")
+    # print(recvr_mail)
+    i=0
+    while i < len(recvr_mail):
         
-        # ennd of data
-        temp=".\r\n"
+        temp=recvr_mail[i]
+        # print(temp)
+        if temp.endswith("\n"):
+            temp=temp[:-1]
+        # print(temp)
+        temp="RCPT TO:" + temp + "\r\n"
         client_sock.send(temp.encode(FORMAT))
         temp="C: "+ temp[:-1]
         print(temp,flush=True)
         check_status_code(client_sock, 250)
+        i=i+1
+    
 
-        temp="QUIT\r\n"
-        client_sock.send(temp.encode(FORMAT))
-        temp="C: "+ temp[:-1]
+    #DATA
+    temp="DATA\r\n"
+    client_sock.send(temp.encode(FORMAT))
+    temp="C: "+ temp[:-1]
+    print(temp,flush=True)
+    check_status_code(client_sock, 354)
+
+    i=2
+    while i<len(lines):
+        temp=lines[i]
+        if i!=len(lines)-1:
+            temp=temp[:-1]
+            temp=temp+"\r\n"
+            client_sock.send(temp.encode(FORMAT))
+            temp="C: "+ temp[:-1]
+        else:
+            temp=temp+"\r\n"
+            client_sock.send(temp.encode(FORMAT))
+            temp="C: "+ temp[:-1]
         print(temp,flush=True)
-        check_status_code(client_sock, 221)
-    except:
-        out_str="C: "+file_path
-        print(out_str, flush=True)
+        check_status_code(client_sock, 354)
+        i=i+1
+    
+    # ennd of data
+    temp=".\r\n"
+    client_sock.send(temp.encode(FORMAT))
+    temp="C: "+ temp[:-1]
+    print(temp,flush=True)
+    check_status_code(client_sock, 250)
+
+    temp="QUIT\r\n"
+    client_sock.send(temp.encode(FORMAT))
+    temp="C: "+ temp[:-1]
+    print(temp,flush=True)
+    check_status_code(client_sock, 221)
+
     
 
 
@@ -247,12 +237,44 @@ def initialization(file_path):
         send_mail(client_sock,file_path)
 
 
-def main():
+def check_file(file_path):
+    f = open(file_path, "r")
+    lines = f.readlines()
+    try:
+        mail=lines[0].split(" ")
+        if mail[0].lower()=='from:\n':
+            exit(0)
+        if mail[0].lower()=="from:" and mail[1]!="" and mail[0]!="\n":
+            pass
+        else:
+            exit(0)
 
+        mail=lines[1].split(" ")
+        if mail[0].lower()=='to:\n':
+            exit(0)
+        if mail[0].lower()=="to:" and mail[1]!="" and mail[0]!="\n":
+            pass
+        else:
+            exit(0)
+
+    except:
+        out_str="C: "+file_path
+        print(out_str, flush=True)
+
+
+def main():
     global SEND_PATH
     get_port_and_path()
     dir_list = os.listdir(SEND_PATH)
     dir_list.sort()
+    i=0
+    while i< len(dir_list):
+        path=SEND_PATH+'/'+dir_list[i]
+        check_file(path)
+        # initialization(path)
+        
+        i=i+1
+    
     i=0
     while i< len(dir_list):
         path=SEND_PATH+'/'+dir_list[i]
