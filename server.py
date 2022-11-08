@@ -86,7 +86,7 @@ def get_response(conn):
     client_response= conn.recv(SIZE).decode(FORMAT)
     if not client_response:
         print("S: Connection lost", flush=True)
-        return
+        return '0', '1'
     else:
         if client_response.endswith('\n'):
             client_response=client_response[:-1]
