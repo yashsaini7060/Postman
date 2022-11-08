@@ -84,14 +84,17 @@ def send_response(conn , string):
 def get_response(conn):
 
     client_response= conn.recv(SIZE).decode(FORMAT)
-    if client_response.endswith('\n'):
-        client_response=client_response[:-1]
-    out_str = "C: " + client_response
-    print(out_str, flush=True)
+    if not client_response:
+        print("S: Connection lost", flush=True)
+    else:
+        if client_response.endswith('\n'):
+            client_response=client_response[:-1]
+        out_str = "C: " + client_response
+        print(out_str, flush=True)
 
-    client_code=client_response.split(" ")
+        client_code=client_response.split(" ")
 
-    return client_code[0], client_response
+        return client_code[0], client_response
 
 
 
@@ -161,12 +164,16 @@ def auto_res(conn,prev_data):
         send_response(conn,'221 Service closing transmission channel\r\n')
     elif response.lower()=="noop\r":
         send_response(conn,'250 Requested mail action okay completed\r\n')
+    elif response.lower()=="reset\r":
+        send_response(conn,'250 Requested mail action okay completed\r\n')
     elif prev_data=="service ready":
         if response.lower()=="ehlo 127.0.0.1\r":
             send_response(conn,'250 127.0.0.1\r\n')
             EHOL=True
             send_response(conn,'250 AUTH CRAM-MD5\r\n')
             auto_res(conn,'AUTH CRAM-MD5')
+        elif response.lower()=="noop":
+            send_response(conn,'250 Requested mail action okay completed\r\n')
         else:
             send_response(conn,'501 Syntax error in parameters or arguments\r\n')
             auto_res(conn,'service ready')
