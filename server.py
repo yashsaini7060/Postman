@@ -173,9 +173,13 @@ def auto_res(conn,prev_data):
         else:
             send_response(conn,'501 Syntax error in parameters or arguments\r\n')
             auto_res(conn,'service ready')
+
     elif prev_data=='AUTH CRAM-MD5':
         if response.lower()=="auth cram-md5\r":
             pass
+        elif code.lower()=="mail":
+            pass
+
 
 
         
