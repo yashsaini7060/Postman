@@ -14,8 +14,6 @@ AUTH=False
 FILEDATA=[]
 
 
-
-
 def get_port_and_path():
     global PORT
     global INBOX_PATH
@@ -71,7 +69,6 @@ def get_port_and_path():
         INBOX_PATH=send_path
 
 
-
 def send_response(conn , string):
     global FORMAT
     conn.send(string.encode(FORMAT))
@@ -83,7 +80,6 @@ def send_response(conn , string):
             string=string[:-1]
         new_str="S: " + string
         print(new_str, flush=True)
-    
     
 
 def get_response(conn):
@@ -100,10 +96,6 @@ def get_response(conn):
         client_code=client_response.split(" ")
 
         return client_code[0], client_response
-
-
-
-
 
 
 def check_status_code(conn, expected_status_code: str) -> None:
@@ -130,31 +122,6 @@ def check_status_code(conn, expected_status_code: str) -> None:
         if actual_status_code != expected_status_code.lower():
             raise ValueError(f"expected code {expected_status_code}, but was {actual_status_code}")
     
-
-    
-
-
-def setup_client_connection():
-    global PORT
-    global IP
-    
-    """ Staring a TCP socket. """
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    """ Bind the IP and PORT to the server. """
-
-    server.bind((IP, PORT))
-
-    """ Server is listening, i.e., server is now waiting for the client to connected. """
-    server.listen(1)
-
-
-    conn, addr = server.accept()
-
-    return conn
-
-
-
 
 
 def auto_res(conn,prev_data):
