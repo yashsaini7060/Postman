@@ -77,7 +77,7 @@ def send_response(conn , string):
     conn.send(string.encode(FORMAT))
     if string=="250 127.0.0.1\n250 AUTH CRAM-MD5\r\n":
         print('S: 250 127.0.0.1')
-        print('S:250 AUTH CRAM-MD5\r')
+        print('S: 250 AUTH CRAM-MD5\r')
     else:
         if string.endswith('\n'):
             string=string[:-1]
